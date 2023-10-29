@@ -88,7 +88,17 @@ typedef enum{
 	BMP390_Filter_Coef_X63 =  6,   /* filter coefficient : 63 */
 	BMP390_Filter_Coef_X127 = 7    /* filter coefficient : 127 */
 
-}BMP390_FilterCoefficients;
+}BMP390_FilterCoefTypeDef;
+
+typedef enum{
+}BMP390_ErrorTypeDef;
+
+typedef enum{
+}BMP390_StatusTypeDef;
+
+
+
+
 
 /******************************************************************************/
 /*!@name         	BMP390 Structures                                         */
