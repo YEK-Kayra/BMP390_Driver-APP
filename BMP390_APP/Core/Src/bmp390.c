@@ -31,4 +31,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * THE PLANS
+ * Press Filter coef ==> 8
+ * Oversampling press ==> x8 , Oversampling temp ==> x2
+ * Odr value ==> 50Hz
+ */
+
 #include "bmp390.h"
