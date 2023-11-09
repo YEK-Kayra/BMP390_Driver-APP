@@ -13,10 +13,8 @@
 /*
  * $WİLL BE ADDED FEATURES$
  *
- * !Chip Id , Revision Id will be added
- * !FIFO features and Sensor Time  will be added
- * Event register will be used
- * CMD register will be used
+ * interrupt.h and .c files will be added
+ * fifo.h and .c files will be added
  **/
 
 #ifndef INC_BMP390_H_
@@ -61,7 +59,8 @@ extern float  BMP390_gForce;
 #define BMP390_REG_DATA_5   		0x09  /*24Bit temperature data of MSB byte*/
 
 #define BMP390_REG_PWR_CTRL   		0x1B  /**Enables or disables pressure and temperature measurement.
- 	 	 	 	 	 	 	 	 	 	 	* bits : mode[5:4], temp_en[1:1], press_en[0:0]
+ 	 	 	 	 	 	 	 	 	 	 	* bits : mode[5:4],temp_en[1:1], press_en[0:0]
+ 	 	 	 	 	 	 	 	 	 	 	*
  	 	 	 	 	 	 	 	 	 	 	* 		 mode ==> Sleep mode  [00]
  	 	 	 	 	 	 	 	 	 	 	* 		 		  Forced mode [10]
  	 	 	 	 	 	 	 	 	 	 	* 		 		  Normal mode [11]
@@ -164,11 +163,31 @@ typedef enum{
 }BMP390_En_TypeDef;
 
 
+/**
+ * @brief BMP390 output data rates by means of setting the (subdivision/subsampling) enumeration definition
+ */
 typedef enum{
 
+	BMP390_ODR_200	 = 0,	/*Sampling period = 5ms*/
+	BMP390_ODR_100 	 = 1,	/*Sampling period = 10ms*/
+	BMP390_ODR_50    = 2,	/*Sampling period = 20ms*/
+	BMP390_ODR_25  	 = 3,	/*Sampling period = 40ms*/
+	BMP390_ODR_12p5  = 4,	/*Sampling period = 80ms*/
+	BMP390_ODR_6p25  = 5,	/*Sampling period = 160ms*/
+	BMP390_ODR_3p1   = 6,	/*Sampling period = 320ms*/
+	BMP390_ODR_1p5   = 7,	/*Sampling period = 640ms*/
+	BMP390_ODR_0p78  = 8,	/*Sampling period = 1.280s*/
+	BMP390_ODR_0p39  = 9,	/*Sampling period = 2.560ms*/
+	BMP390_ODR_0p2   = 10,	/*Sampling period = 5.120s*/
+	BMP390_ODR_0p1   = 11,	/*Sampling period = 10.24s*/
+	BMP390_ODR_0p05  = 12,	/*Sampling period = 20.48s*/
+	BMP390_ODR_0p02  = 13,	/*Sampling period = 40.96s*/
+	BMP390_ODR_0p01  = 14,	/*Sampling period = 81.92s*/
+	BMP390_ODR_0p006 = 15,	/*Sampling period = 163.84s*/
+	BMP390_ODR_0p003 = 16,	/*Sampling period = 327.68s*/
+	BMP390_ODR_0p0015 = 17, /*Sampling period = 655.36s*/
 
-
-};
+}BMP390_ODR_TypeDef;
 
 
 
@@ -177,6 +196,28 @@ typedef enum{
 /******************************************************************************/
 /*!@name         	BMP390 Structures                                         */
 /******************************************************************************/
+
+typedef struct{
+	//These variables get value to calculate the pressure and temperature from chip
+	uint16_t NVM_PAR_T1;
+	uint16_t NVM_PAR_T2;
+	int16_t NVM_PAR_T3;
+	int16_t NVM_PAR_P1;
+	int16_t NVM_PAR_P2;
+	int16_t NVM_PAR_P3;
+	int16_t NVM_PAR_P4;
+	uint16_t NVM_PAR_P5;
+	uint16_t NVM_PAR_P6;
+	int16_t NVM_PAR_P7;
+	int16_t NVM_PAR_P8;
+	int16_t NVM_PAR_P9;
+	int16_t NVM_PAR_P10;
+	int16_t NVM_PAR_P11;
+
+
+
+
+}BMP390_HandleTypeDef;
 
 /******************************************************************************/
 /*!@name          	BMP390 Function Prototypes            			  		  */
