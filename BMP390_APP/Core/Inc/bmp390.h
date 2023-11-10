@@ -96,61 +96,7 @@ extern float  BMP390_gForce;
 /*!@name         	BMP390 Enums                                      		  */
 /******************************************************************************/
 
-/**
- * @brief BMP390 IIR filter coefficients
- */
-typedef enum{
-
-	BMP390_Filter_Coef_0   =  0,   /* filter coefficient : 0 */
-	BMP390_Filter_Coef_1   =  1,   /* filter coefficient : 1 */
-	BMP390_Filter_Coef_3   =  2,   /* filter coefficient : 3 */
-	BMP390_Filter_Coef_7   =  3,   /* filter coefficient : 7 */
-	BMP390_Filter_Coef_15  =  4,   /* filter coefficient : 15 */
-	BMP390_Filter_Coef_31  =  5,   /* filter coefficient : 31 */
-	BMP390_Filter_Coef_63  =  6,   /* filter coefficient : 63 */
-	BMP390_Filter_Coef_127 =  7    /* filter coefficient : 127 */
-
-}BMP390_FilterCoefTypeDef;
-
-
-/**
- * @brief BMP390 sensor status flag
- */
-typedef enum{
-
-	BMP390_Error_Fatal 		   =  1, /*Power Issues, Hardware Issues */
-	BMP390_Error_Command       =  2, /*Communication & Time Issues, Abnormal Input Data Inconsistencies (!Cleared on read)*/
-	BMP390_Error_Configuration =  4  /*Sensor Configuration (!Cleared on read)*/
-
-}BMP390_ErrorTypeDef;
-
-
-/**
- * @brief BMP390 pressure and temperature data status flag
- */
-typedef enum{
-
-	BMP390_drdy_CMD 	 = (1<<4),  /*Command decoder is ready to accept a new command*/
-	BMP390_drdy_Press 	 = (1<<5),	/*Data ready for pressure*/
-	BMP390_drdy_Temp  	 = (1<<6)   /*Data ready for temperature sensor*/
-
-}BMP390_StatusTypeDef;
-
-
-/**
- * @brief BMP390 oversampling enumeration definition for pressure and temperature data
- */
-typedef enum{
-
-	BMP390_Oversampling_X1 	= 0,	/*No oversampling*/
-	BMP390_Oversampling_X2 	= 1,	/*x2 oversampling*/
-	BMP390_Oversampling_X4 	= 2,	/*x4 oversampling*/
-	BMP390_Oversampling_X8 	= 3,	/*x8 oversampling*/
-	BMP390_Oversampling_X16 = 4,	/*x16 oversampling*/
-	BMP390_Oversampling_X32 = 5		/*x32 oversampling*/
-
-}BMP390_Osrs_TypeDef;
-
+/***********************GENERAL SENSOR FEATURES ENUMS**************************/
 
 /**
  * @brief BMP390 working mode
@@ -173,6 +119,48 @@ typedef enum{
 	BMP390_Eneable_TempPress = 1
 
 }BMP390_En_TypeDef;
+
+/**
+ * @brief BMP390 CMD register will operate softreset and flushing FIFO
+ */
+typedef enum{
+
+	BMP390_CMD_Fifoflush = 0xB0, /*Clears all data in the FIFO, does not change FIFO_CONFIG registers*/
+	BMP390_CMD_Softreset = 0xB6  /*Triggers a reset, all user configuration settings are overwritten with their default state*/
+
+}BMP390_CMD_TypeDef;
+
+
+/**
+ * @brief BMP390 IIR filter coefficients
+ */
+typedef enum{
+
+	BMP390_Filter_Coef_0   =  0,   /* filter coefficient : 0 */
+	BMP390_Filter_Coef_1   =  1,   /* filter coefficient : 1 */
+	BMP390_Filter_Coef_3   =  2,   /* filter coefficient : 3 */
+	BMP390_Filter_Coef_7   =  3,   /* filter coefficient : 7 */
+	BMP390_Filter_Coef_15  =  4,   /* filter coefficient : 15 */
+	BMP390_Filter_Coef_31  =  5,   /* filter coefficient : 31 */
+	BMP390_Filter_Coef_63  =  6,   /* filter coefficient : 63 */
+	BMP390_Filter_Coef_127 =  7    /* filter coefficient : 127 */
+
+}BMP390_FilterCoefTypeDef;
+
+
+/**
+ * @brief BMP390 oversampling enumeration definition for pressure and temperature data
+ */
+typedef enum{
+
+	BMP390_Oversampling_X1 	= 0,	/*No oversampling*/
+	BMP390_Oversampling_X2 	= 1,	/*x2 oversampling*/
+	BMP390_Oversampling_X4 	= 2,	/*x4 oversampling*/
+	BMP390_Oversampling_X8 	= 3,	/*x8 oversampling*/
+	BMP390_Oversampling_X16 = 4,	/*x16 oversampling*/
+	BMP390_Oversampling_X32 = 5		/*x32 oversampling*/
+
+}BMP390_Osrs_TypeDef;
 
 
 /**
@@ -202,27 +190,8 @@ typedef enum{
 }BMP390_ODR_TypeDef;
 
 
-/**
- * @brief BMP390 CMD register will operate softreset and flushing FIFO
- */
-typedef enum{
 
-	BMP390_CMD_Fifoflush = 0xB0, /*Clears all data in the FIFO, does not change FIFO_CONFIG registers*/
-	BMP390_CMD_Softreset = 0xB6  /*Triggers a reset, all user configuration settings are overwritten with their default state*/
-
-}BMP390_CMD_TypeDef;
-
-
-/**
- * @brief BMP390 event status. These variable for check the register's flags
- */
-typedef enum{
-
-	BMP390_Event_por_detected = 1,
-	BMP390_Event_itf_act_pt   = 1
-
-}BMP390_Event_TypeDef;
-
+/***********************FIFO FEATURES ENUMS**************************/
 
 /**
  * @brief BMP390 FIFO downsampling selection for pressure and temperature data, factor is 2^fifo_subsampling
@@ -251,6 +220,17 @@ typedef enum{
 
 }BMP390_Fifo_DataSelectTypeDef;
 
+/***********************STATUS AND INTERRUPT FLAG ENUMS**************************/
+/**
+ * @brief BMP390 event status. These variable for check the register's flags
+ */
+typedef enum{
+
+	BMP390_Event_por_detected = 1,
+	BMP390_Event_itf_act_pt   = 1
+
+}BMP390_Event_TypeDef;
+
 
 /**
  * @brief BMP390 Interrupt status
@@ -264,6 +244,29 @@ typedef enum{
 }BMP390_IntStat_TypeDef;
 
 
+/**
+ * @brief BMP390 pressure and temperature data status flag
+ */
+typedef enum{
+
+	BMP390_drdy_CMD 	 = (1<<4),  /*Command decoder is ready to accept a new command*/
+	BMP390_drdy_Press 	 = (1<<5),	/*Data ready for pressure*/
+	BMP390_drdy_Temp  	 = (1<<6)   /*Data ready for temperature sensor*/
+
+}BMP390_DataStatusTypeDef;
+
+
+/**
+ * @brief BMP390 sensor status flag
+ */
+typedef enum{
+
+	BMP390_Error_Fatal 		   =  1, /*Power Issues, Hardware Issues */
+	BMP390_Error_Command       =  2, /*Communication & Time Issues, Abnormal Input Data Inconsistencies (!Cleared on read)*/
+	BMP390_Error_Configuration =  4  /*Sensor Configuration (!Cleared on read)*/
+
+}BMP390_ErrorTypeDef;
+
 
 
 /******************************************************************************/
@@ -272,7 +275,9 @@ typedef enum{
 
 typedef struct{
 
-	//These variables get value to calculate the pressure and temperature from chip
+	/**
+	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
+	 */
 	uint16_t NVM_PAR_T1;
 	uint16_t NVM_PAR_T2;
 	int16_t NVM_PAR_T3;
@@ -288,15 +293,21 @@ typedef struct{
 	int16_t NVM_PAR_P10;
 	int16_t NVM_PAR_P11;
 
+}BMP390_Calib_DataTypeDef;
+
+typedef struct{
+
+
+
 }BMP390_HandleTypeDef;
 
 /******************************************************************************/
 /*!@name          	BMP390 Function Prototypes            			  		  */
 /******************************************************************************/
 
-//BMP390_StatusTypeDef BMP390_Init();
+void BMP390_Init();
 
-
+void BMP390_Config_CalibDatas();
 
 
 
