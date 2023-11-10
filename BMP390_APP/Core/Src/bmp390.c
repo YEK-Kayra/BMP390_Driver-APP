@@ -36,6 +36,8 @@
  * Press Filter coef ==> 8
  * Oversampling press ==> x8 , Oversampling temp ==> x2
  * Odr value ==> 50Hz
+ *
+ * NOTE ==> if our sensor does soft reset. All params of the sensor are cleared. We have to init our sensor properly again.
  */
 
 #include "bmp390.h"

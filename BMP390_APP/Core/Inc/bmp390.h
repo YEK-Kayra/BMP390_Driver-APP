@@ -15,6 +15,7 @@
  *
  * interrupt.h and .c files will be added
  * fifo.h and .c files will be added
+ * fifo_flush register will be used , if you use soft reset , you don't forget to init the sensor again
  **/
 
 #ifndef INC_BMP390_H_
@@ -79,13 +80,24 @@ extern float  BMP390_gForce;
  	 	 	 	 	 	 	 	 	 	 	* bits :  iir_filter[3:1]
  	 	 	 	 	 	 	 	 	 	 	* */
 
+#define BMP390_REG_FIFO_CONFIG_1	0x17 /**
+ 	 	 	 	 	 	 	 	 	 	  * fifo_mode[0:0],fifo_stop_on_full[1:1],fifo_time_en[2:2],fifo_press_en[3:3],fifo_temp_en[4:4]
+ 	 	 	 	 	 	 	 	 	 	  */
+
+
+#define BMP390_REG_FIFO_CONFIG_2	0x18 /**
+ 	 	 	 	 	 	 	 	 	 	  * fifo_subsampling[2:0], data_select[3:4]
+ 	 	 	 	 	 	 	 	 	 	  */
+
+
+
 
 /******************************************************************************/
 /*!@name         	BMP390 Enums                                      		  */
 /******************************************************************************/
 
 /**
- * @brief BMP390 IIR filter coefficients enumeration definition
+ * @brief BMP390 IIR filter coefficients
  */
 typedef enum{
 
@@ -102,7 +114,7 @@ typedef enum{
 
 
 /**
- * @brief BMP390 sensor status flag enumeration definition
+ * @brief BMP390 sensor status flag
  */
 typedef enum{
 
@@ -114,7 +126,7 @@ typedef enum{
 
 
 /**
- * @brief BMP390 pressure and temperature data status flag enumeration definition
+ * @brief BMP390 pressure and temperature data status flag
  */
 typedef enum{
 
@@ -141,7 +153,7 @@ typedef enum{
 
 
 /**
- * @brief BMP390 working mode enumeration definition
+ * @brief BMP390 working mode
  */
 typedef enum{
 
@@ -153,18 +165,18 @@ typedef enum{
 
 
 /**
- * @brief BMP390 (de)active sensor press and temp enumeration definition
+ * @brief BMP390 (de)active sensor pressure and temperature
  */
 typedef enum{
 
-	BMP390_Disable_TP = 0,
-	BMP390_Eneable_TP = 1
+	BMP390_Disable_TempPress = 0,
+	BMP390_Eneable_TempPress = 1
 
 }BMP390_En_TypeDef;
 
 
 /**
- * @brief BMP390 output data rates by means of setting the (subdivision/subsampling) enumeration definition
+ * @brief BMP390 output data rates by means of setting the (subdivision/subsampling)
  */
 typedef enum{
 
@@ -190,6 +202,67 @@ typedef enum{
 }BMP390_ODR_TypeDef;
 
 
+/**
+ * @brief BMP390 CMD register will operate softreset and flushing FIFO
+ */
+typedef enum{
+
+	BMP390_CMD_Fifoflush = 0xB0, /*Clears all data in the FIFO, does not change FIFO_CONFIG registers*/
+	BMP390_CMD_Softreset = 0xB6  /*Triggers a reset, all user configuration settings are overwritten with their default state*/
+
+}BMP390_CMD_TypeDef;
+
+
+/**
+ * @brief BMP390 event status. These variable for check the register's flags
+ */
+typedef enum{
+
+	BMP390_Event_por_detected = 1,
+	BMP390_Event_itf_act_pt   = 1
+
+}BMP390_Event_TypeDef;
+
+
+/**
+ * @brief BMP390 FIFO downsampling selection for pressure and temperature data, factor is 2^fifo_subsampling
+ */
+typedef enum{
+
+	BMP390_FifoSub_0 = 0,
+	BMP390_FifoSub_1 = 1,
+	BMP390_FifoSub_2 = 2,
+	BMP390_FifoSub_3 = 3,
+	BMP390_FifoSub_4 = 4,
+	BMP390_FifoSub_5 = 5,
+	BMP390_FifoSub_6 = 6,
+	BMP390_FifoSub_7 = 7,
+
+}BMP390_Fifo_SubsamplingTypeDef;
+
+
+/**
+ * @brief BMP390 FIFO data source for pressure and temperature
+ */
+typedef enum{
+
+	BMP390_Fifo_UnfilteredData  = 0, /*Unfiltered data (compensated or uncompensated) */
+	BMP390_Fifo_FilteredData 	= 1	 /*Filtered data (compensated or uncompensated)   */
+
+}BMP390_Fifo_DataSelectTypeDef;
+
+
+/**
+ * @brief BMP390 Interrupt status
+ */
+typedef enum{
+
+	BMP390_IntStat_Fifo_wm 	 = (1<<0),
+	BMP390_IntStat_Fifo_full = (1<<0),
+	BMP390_IntStat_drdy		 = (1<<0)
+
+}BMP390_IntStat_TypeDef;
+
 
 
 
@@ -198,6 +271,7 @@ typedef enum{
 /******************************************************************************/
 
 typedef struct{
+
 	//These variables get value to calculate the pressure and temperature from chip
 	uint16_t NVM_PAR_T1;
 	uint16_t NVM_PAR_T2;
@@ -213,9 +287,6 @@ typedef struct{
 	int16_t NVM_PAR_P9;
 	int16_t NVM_PAR_P10;
 	int16_t NVM_PAR_P11;
-
-
-
 
 }BMP390_HandleTypeDef;
 
