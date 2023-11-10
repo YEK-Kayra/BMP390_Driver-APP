@@ -309,6 +309,8 @@ void BMP390_Init();
 
 void BMP390_Config_CalibDatas();
 
+void BMP390_Set_DefaultParams();
+
 
 
 #endif /* INC_BMP390_H_ */
