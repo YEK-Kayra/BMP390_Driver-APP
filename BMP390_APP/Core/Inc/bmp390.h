@@ -276,6 +276,28 @@ typedef enum{
 typedef struct{
 
 	/**
+	 * PAR_T/P parameters are processed data. We use them when calculating Pressure, Temperature compensation
+	 */
+	float PAR_T1;
+	float PAR_T2;
+	float PAR_T3;
+	float PAR_P1;
+	float PAR_P2;
+	float PAR_P3;
+	float PAR_P4;
+	float PAR_P5;
+	float PAR_P6;
+	float PAR_P7;
+	float PAR_P8;
+	float PAR_P9;
+	float PAR_P10;
+	float PAR_P11;
+
+}BMP390_ProcessedCalibData_TypeDef;
+
+typedef struct{
+
+	/**
 	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
 	 */
 	uint16_t NVM_PAR_T1;
@@ -293,13 +315,27 @@ typedef struct{
 	int16_t NVM_PAR_P10;
 	int16_t NVM_PAR_P11;
 
-}BMP390_Calib_DataTypeDef;
+}BMP390_RawCalibData_TypeDef;
+
+typedef struct {
+
+	//Default parameters tarafları ve isimler iyice araştırılıp ayarlanacak
+	BMP390_ModeTypeDef bmp390Mode;
+
+}BMP390_Params_t;
+
 
 typedef struct{
+
+	BMP390_Params_t BMP390_Params; //Bir öge oluştur temel yapılandırma ayarlarına yayılan
+
+	uint16_t BMP280_I2C_ADDRESS;   //Yazılan i2c adresinin genel halini tutsun dinamik bir değişken
+	I2C_HandleTypeDef *i2c;			//i2c handle i gerektiği yerde buradan veri çekeceğiz
 
 
 
 }BMP390_HandleTypeDef;
+
 
 /******************************************************************************/
 /*!@name          	BMP390 Function Prototypes            			  		  */
