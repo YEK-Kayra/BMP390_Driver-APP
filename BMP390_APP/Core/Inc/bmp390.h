@@ -9,6 +9,7 @@
  *
  **/
 
+// Bekle beni CEM KARACA yazıyoruz kütüphaneyi biiznillah
 
 /*
  * $WİLL BE ADDED FEATURES$
