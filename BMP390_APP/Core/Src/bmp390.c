@@ -42,3 +42,20 @@
 
 #include "bmp390.h"
 
+void BMP390_Init(){
+
+	BMP390_Set_DefaultParams();
+
+	BMP390_Config_CalibDatas();
+
+}
+
+void BMP390_Set_DefaultParams(){
+
+
+}
+
+void BMP390_Config_CalibDatas(){
+
+
+}

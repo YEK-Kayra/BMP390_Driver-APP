@@ -320,8 +320,8 @@ typedef struct{
 
 typedef struct {
 
-	//Default parameters tarafları ve isimler iyice araştırılıp ayarlanacak
 	BMP390_ModeTypeDef bmp390Mode;
+
 
 }BMP390_Params_t;
 

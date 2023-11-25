@@ -43,6 +43,7 @@
 I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
+BMP390_HandleTypeDef BMP390;
 
 double BMP390_Pressure;
 double BMP390_Temperature;
