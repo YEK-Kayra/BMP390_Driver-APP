@@ -31,7 +31,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define BMP390_I2C_ADDRESS_L 0x76 //SDO pin is low
+#define BMP390_I2C_ADDRESS_H 0x77 //SDO pin is high
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,6 +44,7 @@
 I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
+
 BMP390_HandleTypeDef BMP390;
 
 double BMP390_Pressure;
@@ -97,6 +99,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
 
   /* USER CODE END 2 */
 

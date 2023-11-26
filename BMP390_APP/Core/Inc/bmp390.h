@@ -119,7 +119,7 @@ typedef enum{
 	BMP390_Disable_TempPress = 0,
 	BMP390_Eneable_TempPress = 1
 
-}BMP390_En_TypeDef;
+}BMP390_dActive_TypeDef;
 
 /**
  * @brief BMP390 CMD register will operate softreset and flushing FIFO
@@ -318,9 +318,16 @@ typedef struct{
 
 }BMP390_RawCalibData_TypeDef;
 
-typedef struct {
+//Fifo için eneable,disable
+typedef struct { //registerlara kayıt için toplican bu parametreleri
 
 	BMP390_ModeTypeDef bmp390Mode;
+	BMP390_Osrs_TypeDef bmp390_press_osrs;
+	BMP390_Osrs_TypeDef bmp390_temp_osrs;
+	BMP390_ODR_TypeDef	bmp390_odr;
+	BMP390_FilterCoefTypeDef bmp390_filtercoef;
+	BMP390_dActive_TypeDef bmp390_dActive_press;
+	BMP390_dActive_TypeDef bmp390_dActive_temp;
 
 
 }BMP390_Params_t;
@@ -328,10 +335,15 @@ typedef struct {
 
 typedef struct{
 
-	BMP390_Params_t BMP390_Params; //Bir öge oluştur temel yapılandırma ayarlarına yayılan
+	BMP390_Params_t BMP390_Params; //Bir öge oluştur==>Mode,ODR,OSRS,FİLTER,interface,sıcaklıkbasınçeneable disable
 
 	uint16_t BMP280_I2C_ADDRESS;   //Yazılan i2c adresinin genel halini tutsun dinamik bir değişken
+
 	I2C_HandleTypeDef *i2c;			//i2c handle i gerektiği yerde buradan veri çekeceğiz
+
+	BMP390_RawCalibData_TypeDef Raw_NVM; // Raw kalibrasyon verilerine ulaşacağımız yer
+
+	BMP390_ProcessedCalibData_TypeDef Prcd_NVM; // İşlenmiş verileri kayıt edip kullanacağımız yer
 
 
 
