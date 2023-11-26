@@ -108,7 +108,7 @@ typedef enum{
 	BMP390_Mode_Forced = 1,
 	BMP390_Mode_Normal = 2
 
-}BMP390_ModeTypeDef;
+}BMP390_Mode_TypeDef;
 
 
 /**
@@ -119,8 +119,28 @@ typedef enum{
 	BMP390_Disable_TempPress = 0,
 	BMP390_Eneable_TempPress = 1
 
-}BMP390_dActive_TypeDef;
+}BMP390_EnMeas_TypeDef;
 
+typedef enum{
+
+	BMP390_SPI4W_Mode = 0,
+	BMP390_SPI3W_Mode = 1
+
+}BMP390_SPI_X_TypeDef;
+
+typedef enum{
+
+	BMP390_I2C_Wdt_Disable = 0,
+	BMP390_I2C_Wdt_Enable  = 1
+
+}BMP390_I2C_Wdt_En_TypeDef;
+
+typedef enum{
+
+	BMP390_I2C_Selt_Short = 0,
+	BMP390_I2C_Sel_Long  = 1
+
+}BMP390_I2C_Wdt_Sel_TypeDef;
 /**
  * @brief BMP390 CMD register will operate softreset and flushing FIFO
  */
@@ -146,7 +166,7 @@ typedef enum{
 	BMP390_Filter_Coef_63  =  6,   /* filter coefficient : 63 */
 	BMP390_Filter_Coef_127 =  7    /* filter coefficient : 127 */
 
-}BMP390_FilterCoefTypeDef;
+}BMP390_FilterCoef_TypeDef;
 
 
 /**
@@ -208,7 +228,7 @@ typedef enum{
 	BMP390_FifoSub_6 = 6,
 	BMP390_FifoSub_7 = 7,
 
-}BMP390_Fifo_SubsamplingTypeDef;
+}BMP390_Fifo_Subsampling_TypeDef;
 
 
 /**
@@ -219,7 +239,7 @@ typedef enum{
 	BMP390_Fifo_UnfilteredData  = 0, /*Unfiltered data (compensated or uncompensated) */
 	BMP390_Fifo_FilteredData 	= 1	 /*Filtered data (compensated or uncompensated)   */
 
-}BMP390_Fifo_DataSelectTypeDef;
+}BMP390_Fifo_DataSelect_TypeDef;
 
 /***********************STATUS AND INTERRUPT FLAG ENUMS**************************/
 /**
@@ -254,7 +274,7 @@ typedef enum{
 	BMP390_drdy_Press 	 = (1<<5),	/*Data ready for pressure*/
 	BMP390_drdy_Temp  	 = (1<<6)   /*Data ready for temperature sensor*/
 
-}BMP390_DataStatusTypeDef;
+}BMP390_DataStatus_TypeDef;
 
 
 /**
@@ -266,7 +286,7 @@ typedef enum{
 	BMP390_Error_Command       =  2, /*Communication & Time Issues, Abnormal Input Data Inconsistencies (!Cleared on read)*/
 	BMP390_Error_Configuration =  4  /*Sensor Configuration (!Cleared on read)*/
 
-}BMP390_ErrorTypeDef;
+}BMP390_Error_TypeDef;
 
 
 
@@ -318,17 +338,33 @@ typedef struct{
 
 }BMP390_RawCalibData_TypeDef;
 
-//Fifo için eneable,disable
+//Fifo_confıg_1,2 için register parametre girilecek
+//int_ctrl için
+
 typedef struct { //registerlara kayıt için toplican bu parametreleri
 
-	BMP390_ModeTypeDef bmp390Mode;
+	BMP390_Mode_TypeDef bmp390Mode;
+	BMP390_ODR_TypeDef	bmp390_odr;
+	BMP390_FilterCoef_TypeDef bmp390_filtercoef;
+
+	/**
+	 * This two of them are about oversampling settings register (OSR), Variables of PWR_CTRL variable
+	 */
 	BMP390_Osrs_TypeDef bmp390_press_osrs;
 	BMP390_Osrs_TypeDef bmp390_temp_osrs;
-	BMP390_ODR_TypeDef	bmp390_odr;
-	BMP390_FilterCoefTypeDef bmp390_filtercoef;
-	BMP390_dActive_TypeDef bmp390_dActive_press;
-	BMP390_dActive_TypeDef bmp390_dActive_temp;
 
+	/**
+	 * This two of them are about eneable disable measurement , Variables of PWR_CTRL variable
+	 */
+	BMP390_EnMeas_TypeDef bmp390_dActive_press;
+	BMP390_EnMeas_TypeDef bmp390_dActive_temp;
+
+	/**
+	 * This three of them are about Interface Configuration register (IF_CONF), Variables of IF_Config variable
+	 */
+	BMP390_SPI_X_TypeDef bmp390_spı_x;
+	BMP390_I2C_Wdt_En_TypeDef bmp390_wdt_en;
+	BMP390_I2C_Wdt_Sel_TypeDef bmp390_wdt_sel;
 
 }BMP390_Params_t;
 
@@ -345,6 +381,9 @@ typedef struct{
 
 	BMP390_ProcessedCalibData_TypeDef Prcd_NVM; // İşlenmiş verileri kayıt edip kullanacağımız yer
 
+	uint8_t IF_Config; // paramslarla değer belirlencek
+	uint8_t PWR_CTRL;  // paramslarla değer belirlencek
+	uint8_t OSRS; 	   //  paramslarla değer belirlencek
 
 
 }BMP390_HandleTypeDef;
