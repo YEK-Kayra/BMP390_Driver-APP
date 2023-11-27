@@ -23,9 +23,9 @@
 #define INC_BMP390_H_
 
 
-/****************************************************************/
-/*!@name         Header includes            				    */
-/****************************************************************/
+/******************************************************************************/
+/*!@name         Header includes            				    			  */
+/******************************************************************************/
 #include "main.h"
 #include "stdbool.h"
 #include "stdint.h"
@@ -46,9 +46,9 @@ extern float  BMP390_gForce;
  * m       = It's the total mass of an object
  **/
 
-/****************************************************************/
-/*!@name          BMP390 Registers   			    		    */
-/****************************************************************/
+/******************************************************************************/
+/*!@name          BMP390 Registers   			    		    			  */
+/******************************************************************************/
 
 #define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions ==> bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
 #define BMP390_REG_STATUS    		0x03  /*Sensor Status Flags ==> bits: drdy_temp[6:6], drdy_press[5:5], cmd_rdy[4:4] (drdy:Data ready x)*/
@@ -94,10 +94,10 @@ extern float  BMP390_gForce;
 
 
 /******************************************************************************/
-/*!@name         		    BMP390 ENUM                                      */
+/*!@name         		    BMP390 ENUM                                       */
 /******************************************************************************/
 
-/***********************GENERAL SENSOR FEATURES ENUMS**************************/
+/*******************GENERAL SENSOR FEATURES ENUMS**********************/
 
 /**
  * @brief Work modes
@@ -297,7 +297,7 @@ typedef enum{
 }BMP390_Fifo_Mode_TypeDef;
 
 
-/***********************STATUS AND INTERRUPT FLAG ENUMS**************************/
+/*******************STATUS AND INTERRUPT FLAG ENUMS**********************/
 
 typedef enum{
 	BMP390_Int_Out_PP = 0,
@@ -379,8 +379,6 @@ typedef enum{
 	BMP390_Error_Configuration =  4  /*Sensor Configuration (!Cleared on read)*/
 
 }BMP390_Error_TypeDef;
-
-
 
 
 /******************************************************************************/
