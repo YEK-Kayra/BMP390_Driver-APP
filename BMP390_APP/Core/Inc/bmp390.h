@@ -471,6 +471,14 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 	BMP390_Fifo_Subsampling_TypeDef bmp390_fifo_subs;
 	BMP390_Fifo_DataSelect_TypeDef bmp390_fifo_sel;
 
+	//Bu kısım ve diğer kısımlardaki bulunan eneable disable opsiyonlular tek bir enum ve struct altında toplanması üzerine mimari çıkartılcak
+	BMP390_Int_Out_TypeDef bmp390_ınt_out;
+	BMP390_Int_Level_TypeDef bmp390_ınt_level;
+	BMP390_Int_Latch_TypeDef bmp390_ınt_latch;
+	BMP390_Int_Fwtm_En_TypeDef bmp390_ınt_fwtm;
+	BMP390_Int_Ffull_En_TypeDef bmp390_ınt_fful;
+	BMP390_Int_Ds_TypeDef bmp390_ınt_ds;
+	BMP390_Int_Drdy_En_TypeDef bmp390_ınt_drdy;
 
 }BMP390_Params_t;
 
