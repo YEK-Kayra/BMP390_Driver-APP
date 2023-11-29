@@ -235,16 +235,27 @@ typedef enum{
 
 /*******************STATUS AND INTERRUPT FLAG ENUMS**********************/
 
+/**
+ * @brief
+ */
 typedef enum{
 	BMP390_Int_Out_PP = 0,
 	BMP390_Int_Out_OD = 1
 }BMP390_Int_Out_TypeDef;
 
+
+/**
+ * @brief
+ */
 typedef enum{
 	BMP390_Int_Level_A_L = 0,
 	BMP390_Int_Level_A_H = 1
 }BMP390_Int_Level_TypeDef;
 
+
+/**
+ * @brief
+ */
 typedef enum{
 	BMP390_Int_Ds_L = 0,
 	BMP390_Int_Ds_H = 1
@@ -367,14 +378,14 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_meas_temp;
 
 	/**
-	 * These three of them are about Interface Configuration register (IF_CONF), Variables of IF_Config variable
+	 * These three of them are about Interface Configuration register (IF_CONF)
 	 */
 	BMP390_SPI_X_TypeDef bmp390_spi_x;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_wdt;
 	BMP390_I2C_Wdt_Sel_TypeDef bmp390_wdt_type;
 
 	/**
-	 * These five of them are about FIFO Configuration 1 register (“FIFO_CONFIG_1), Variables of FIFO_CONFIG_1 variable
+	 * These five of them are about FIFO Configuration_1 register (FIFO_CONFIG_1)
 	 */
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_stopFull;
@@ -383,18 +394,20 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_time;
 
 	/**
-	 * These two of them are about FIFO Configuration 2 register (“FIFO_CONFIG_2), Variables of FIFO_CONFIG_2 variable
+	 * These two of them are about FIFO Configuration_2 register (FIFO_CONFIG_2)
 	 */
 	BMP390_Fifo_Subsampling_TypeDef bmp390_fifo_subs;
 	BMP390_Fifo_DataSelect_TypeDef bmp390_fifo_sel;
 
-	//Bu kısım ve diğer kısımlardaki bulunan eneable disable opsiyonlular tek bir enum ve struct altında toplanması üzerine mimari çıkartılcak
+	/**
+	 * These seven of them are about Interrupt configuration register (INT_CTRL)
+	 */
 	BMP390_Int_Out_TypeDef bmp390_ınt_out;
 	BMP390_Int_Level_TypeDef bmp390_ınt_level;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_latch;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fwtm;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fful;
-	BMP390_Int_Ds_TypeDef bmp390_ınt_ds;
+	BMP390_Int_Ds_TypeDef bmp390_int_ds;
 	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_drdy;
 
 }BMP390_Params_t;
@@ -412,12 +425,33 @@ typedef struct{
 
 	BMP390_ProcessedCalibData_TypeDef Prcd_NVM; // İşlenmiş verileri kayıt edip kullanacağımız yer
 
-	uint8_t IF_CONFIG; // paramslarla değer belirlencek
-	uint8_t PWR_CTRL;  // paramslarla değer belirlencek
-	uint8_t OSRS; 	   //  paramslarla değer belirlencek
-	uint8_t FIFO_CONFIG_1; //  paramslarla değer belirlencek
-	uint8_t FIFO_CONFIG_2; //  paramslarla değer belirlencek
-	uint8_t INT_CTRL; //  paramslarla değer belirlencek
+	uint8_t CONFIG; 				/*! bits: iir_filter[3:1] */
+	uint8_t ODR;					/*! bits: odr_sel[4:0] */
+	uint8_t OSR;					/*! bits: osr_t[5:3], osr_p[2:0] */
+	uint8_t PWR_CTRL;				/*! bits: mode[5:4], temp_en[1:1], press_en[0:0] */
+	uint8_t IF_CONFIG;				/*! bits: i2c_wdt_sel[2:2], i2c_wdt_en[1:1], spi3[0:0] */
+
+	uint8_t INT_CTRL;				/**!bits:
+									 * 		drdy_en[6:6], int_ds[5:5],
+									 * 		ffull_en[4:4], fwtm_en[3:3],
+									 * 		int_latch[2:2], int_level[1:1],
+									 * 		int_od[0:0]
+									 */
+
+	uint8_t FIFO_CONFIG_1;			/**!bits:
+	 	 	 	 	 	 	 	 	 * 		fifo_temp_en[4:4], fifo_press_en[3:3],
+									 * 		fifo_time_en[2:2], fifo_stop_on_full[1:1],
+									 * 		fifo_mode[0:0]
+									 */
+
+
+	uint8_t FIFO_CONFIG_2;			/*! bits: data_select[4:3], fifo_subsampling[2:0] */
+
+	uint8_t FIFO_WTM_0;				/*! bits: fifo_water_mark_0_7[7:0] */
+	uint8_t FIFO_WTM_1;				/*! bits: fifo_water_mark_8[0:0] */
+
+
+
 
 
 }BMP390_HandleTypeDef;
