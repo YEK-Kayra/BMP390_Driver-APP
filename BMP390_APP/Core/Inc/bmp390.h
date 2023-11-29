@@ -99,6 +99,13 @@ extern float  BMP390_gForce;
 
 /*******************GENERAL SENSOR FEATURES ENUMS**********************/
 
+typedef enum{
+
+	Disable = 0,
+	Enable  = 1
+
+}BMP390_REG_Stat_bits_TypeDef;
+
 /**
  * @brief Work modes
  */
@@ -111,16 +118,6 @@ typedef enum{
 }BMP390_Mode_TypeDef;
 
 
-/**
- * @brief (De)Active sensor pressure and temperature
- */
-typedef enum{
-
-	BMP390_Disable_Measurement = 0,
-	BMP390_Eneable_Measurement = 1
-
-}BMP390_Stat_Meas_TypeDef;
-
 typedef enum{
 
 	BMP390_SPI4W_Mode = 0,
@@ -128,12 +125,6 @@ typedef enum{
 
 }BMP390_SPI_X_TypeDef;
 
-typedef enum{
-
-	BMP390_I2C_Wdt_Disable = 0,
-	BMP390_I2C_Wdt_Enable  = 1
-
-}BMP390_I2C_Wdt_En_TypeDef;
 
 typedef enum{
 
@@ -242,61 +233,6 @@ typedef enum{
 }BMP390_Fifo_DataSelect_TypeDef;
 
 
-/**
- * @brief Store temperature data in FIFO
- */
-typedef enum{
-
-	BMP390_Fifo_Temp_Disable = 0,
-	BMP390_Fifo_Temp_Enable  = 1
-
-}BMP390_Fifo_Temp_En_TypeDef;
-
-
-/**
- * @brief Store pressure data in FIFO
- */
-typedef enum{
-
-	BMP390_Fifo_Press_Disable = 0,
-	BMP390_Fifo_Press_Enable  = 1
-
-}BMP390_Fifo_Press_En_TypeDef;
-
-
-/**
- * @brief Return sensortime frame after the last valid data frame
- */
-typedef enum{
-
-	BMP390_Fifo_Time_Disable = 0,
-	BMP390_Fifo_Time_Enable  = 1
-
-}BMP390_Fifo_Time_En_TypeDef;
-
-
-/**
- * @brief Stop writing samples into FIFO when FIFO is full.
- */
-typedef enum{
-
-	BMP390_Fifo_StopOnFull_Disable = 0,
-	BMP390_Fifo_StopOnFull_Enable  = 1
-
-}BMP390_Fifo_StopOnFull_TypeDef;
-
-
-/**
- * @brief Enables or disables the FIFO
- */
-typedef enum{
-
-	BMP390_Fifo_Mode_Disable = 0,
-	BMP390_Fifo_Mode_Enable  = 1
-
-}BMP390_Fifo_Mode_TypeDef;
-
-
 /*******************STATUS AND INTERRUPT FLAG ENUMS**********************/
 
 typedef enum{
@@ -310,29 +246,10 @@ typedef enum{
 }BMP390_Int_Level_TypeDef;
 
 typedef enum{
-	BMP390_Int_Latch_Disable = 0,
-	BMP390_Int_Latch_Enable = 1
-}BMP390_Int_Latch_TypeDef;
-
-typedef enum{
-	BMP390_Int_Fwtm_Disable = 0,
-	BMP390_Int_Fwtm_Enable = 1
-}BMP390_Int_Fwtm_En_TypeDef;
-
-typedef enum{
-	BMP390_Int_Ffull_Disable = 0,
-	BMP390_Int_Ffull_Enable = 1
-}BMP390_Int_Ffull_En_TypeDef;
-
-typedef enum{
 	BMP390_Int_Ds_L = 0,
 	BMP390_Int_Ds_H = 1
 }BMP390_Int_Ds_TypeDef;
 
-typedef enum{
-	BMP390_Int_Drdy_Disable = 0,
-	BMP390_Int_Drdy_Enable = 1
-}BMP390_Int_Drdy_En_TypeDef;
 
 /**
  * @brief Event status. These variable for check the register's flags
@@ -446,24 +363,24 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 	/**
 	 * These two of them are about eneable disable measurement , Variables of PWR_CTRL variable
 	 */
-	BMP390_Stat_Meas_TypeDef bmp390_meas_stat_press;
-	BMP390_Stat_Meas_TypeDef bmp390_meas_stat_temp;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_meas_press;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_meas_temp;
 
 	/**
 	 * These three of them are about Interface Configuration register (IF_CONF), Variables of IF_Config variable
 	 */
 	BMP390_SPI_X_TypeDef bmp390_spi_x;
-	BMP390_I2C_Wdt_En_TypeDef bmp390_wdt_stat;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_wdt;
 	BMP390_I2C_Wdt_Sel_TypeDef bmp390_wdt_type;
 
 	/**
 	 * These five of them are about FIFO Configuration 1 register (“FIFO_CONFIG_1), Variables of FIFO_CONFIG_1 variable
 	 */
-	BMP390_Fifo_Mode_TypeDef bmp390_fifo_mode;
-	BMP390_Fifo_StopOnFull_TypeDef bmp390_fifo_stopFull;
-	BMP390_Fifo_Press_En_TypeDef bmp390_fifo_press_stat;
-	BMP390_Fifo_Temp_En_TypeDef bmp390_fifo_temp_stat;
-	BMP390_Fifo_Time_En_TypeDef bmp390_fifo_time_stat;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_stopFull;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_press;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_temp;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_time;
 
 	/**
 	 * These two of them are about FIFO Configuration 2 register (“FIFO_CONFIG_2), Variables of FIFO_CONFIG_2 variable
@@ -474,11 +391,11 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 	//Bu kısım ve diğer kısımlardaki bulunan eneable disable opsiyonlular tek bir enum ve struct altında toplanması üzerine mimari çıkartılcak
 	BMP390_Int_Out_TypeDef bmp390_ınt_out;
 	BMP390_Int_Level_TypeDef bmp390_ınt_level;
-	BMP390_Int_Latch_TypeDef bmp390_ınt_latch;
-	BMP390_Int_Fwtm_En_TypeDef bmp390_ınt_fwtm;
-	BMP390_Int_Ffull_En_TypeDef bmp390_ınt_fful;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_latch;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fwtm;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fful;
 	BMP390_Int_Ds_TypeDef bmp390_ınt_ds;
-	BMP390_Int_Drdy_En_TypeDef bmp390_ınt_drdy;
+	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_drdy;
 
 }BMP390_Params_t;
 
