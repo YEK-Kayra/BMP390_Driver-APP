@@ -72,20 +72,34 @@ extern float  BMP390_gForce;
 									 			   int_latch[2:2], int_level[1:1],
 									 			   int_od[0:0] */
 
+#define BMP390_REG_FIFO_CONFIG_1	0x17  /*FIFO frame content configuration.
+ 	 	 	 	 	 	 	 	 	 	    bits : fifo_mode[0:0],fifo_stop_on_full[1:1],fifo_time_en[2:2],fifo_press_en[3:3],fifo_temp_en[4:4]*/
 
-#define BMP390_REG_FIFO_CONFIG_1	0x17 /*FIFO frame content configuration.
- 	 	 	 	 	 	 	 	 	 	   bits : fifo_mode[0:0],fifo_stop_on_full[1:1],fifo_time_en[2:2],fifo_press_en[3:3],fifo_temp_en[4:4]*/
+#define BMP390_REG_FIFO_CONFIG_2	0x18  /*extends the FIFO_CONFIG_1 register
+ 	 	 	 	 	 	 	 	 	 	    bits : fifo_subsampling[2:0], data_select[3:4] */
 
-#define BMP390_REG_FIFO_CONFIG_2	0x18 /*extends the FIFO_CONFIG_1 register
- 	 	 	 	 	 	 	 	 	 	  bits : fifo_subsampling[2:0], data_select[3:4] */
+#define BMP390_REG_FIFO_WTM_0_1		0x15  /*The FIFO byte counter indicates the current fill level of the FIFO buffer
+										    16Bit fifo watermark MSB[15:8],LSB[7:0]
+										    bytes {FIFO_WTM_1(0x16),FIFO_WTM_0(0x15)} */
 
+#define BMP390_REG_FIFO_DATA		0x14  /*The data output register
+										    bits : fifo_subsampling[2:0], data_select[3:4]*/
+
+#define BMP390_REG_FIFO_LENGTH_0_1	0x12   /*The FIFO byte counter indicates the current fill level of the FIFO buffer
+											 16Bit fifo lenght MSB[15:8],LSB[7:0]
+											 bytes {FIFO_LENGTH_1(0x13),FIFO_LENGTH_0(0x12)} */
+
+#define BMP390_REG_INT_STATUS		0x11  /*Shows interrupt status and is cleared after reading.
+										    bits : drdy[3:3], ffull_int[1:1], fwm_int[0:0]*/
+
+#define BMP390_REG_EVENT		    0x10  /*Contains the sensor status flags.
+										    bits : itf_act_pt[1:1], por_detected[0:0]*/
 
 #define BMP390_REG_SENSORTIME_0_3   0x0C  /*24Bit pressure MSB[23:16],LSB[15:8],XLSB[7:0]
 											bytes {SENSORTIME_2(0x0E),SENSORTIME_1(0x0D),SENSORTIME_0(0x0C)} */
 
 #define BMP390_REG_DATA_0_5    		0x04  /*24Bit pressure MSB[23:16],LSB[15:8],XLSB[7:0]
 											bytes {DATA2(0x06),DATA1(0x05),DATA0(0x04)}
-
 											24Bit temperature MSB[23:16],LSB[15:8],XLSB[7:0]
 											bytes {DATA5(0x09),DATA4(0x08),DATA3(0x07)} */
 
