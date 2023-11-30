@@ -23,11 +23,13 @@
 /******************************************************************************/
 /*!@name          BMP390 External Variable	     	                          */
 /******************************************************************************/
-extern double BMP390_Pressure;
-extern double BMP390_Temperature;
-extern float  BM390_Altitude;
-extern float  BMP390_VerticalSpeed;
+extern double BMP390_Press;
+extern double BMP390_Temp;
+extern float  BM390_VertAlt;
+extern float  BMP390_VertAcc;
+extern float  BMP390_VertSpd;
 extern float  BMP390_gForce;
+
 /**
  * G force = It's a thing that creates the feeling of heaviness
  * GForce  = m * a
@@ -430,7 +432,7 @@ typedef struct{
 
 	BMP390_RawCalibData_TypeDef Raw_NVM;
 
-	BMP390_PrcsdCalibData_TypeDef Prcd_NVM;
+	BMP390_PrcsdCalibData_TypeDef Prcsd_NVM;
 
 	uint8_t CONFIG; 				/*! bits: iir_filter[3:1] */
 	uint8_t ODR;					/*! bits: odr_sel[4:0] */

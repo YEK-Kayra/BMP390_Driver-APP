@@ -47,12 +47,12 @@ I2C_HandleTypeDef hi2c1;
 
 BMP390_HandleTypeDef BMP390;
 
-double BMP390_Pressure;
-double BMP390_Temperature;
-float  BM390_Altitude;
+double BMP390_Press;
+double BMP390_Temp;
+float  BM390_VertAlt;
+float  BMP390_VertAcc;
+float  BMP390_VertSpd;
 float  BMP390_gForce;
-float  BMP390_VerticalSpeed;
-float  BMP390_VerticalAcc;
 
 /* USER CODE END PV */
 
