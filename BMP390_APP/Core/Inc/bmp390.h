@@ -432,15 +432,15 @@ typedef struct { //registerlara kayıt için toplican bu parametreleri
 
 typedef struct{
 
-	BMP390_Params_t BMP390_Params; //Bir öge oluştur==>Mode,ODR,OSRS,FİLTER,interface,sıcaklıkbasınçeneable disable
+	BMP390_Params_t BMP390_Params;
 
-	uint16_t BMP280_I2C_ADDRESS;   //Yazılan i2c adresinin genel halini tutsun dinamik bir değişken
+	uint16_t BMP280_I2C_ADDRESS;
 
-	I2C_HandleTypeDef *i2c;			//i2c handle i gerektiği yerde buradan veri çekeceğiz
+	I2C_HandleTypeDef *i2c;
 
-	BMP390_RawCalibData_TypeDef Raw_NVM; // Raw kalibrasyon verilerine ulaşacağımız yer
+	BMP390_RawCalibData_TypeDef Raw_NVM;
 
-	BMP390_ProcessedCalibData_TypeDef Prcd_NVM; // İşlenmiş verileri kayıt edip kullanacağımız yer
+	BMP390_ProcessedCalibData_TypeDef Prcd_NVM;
 
 	uint8_t CONFIG; 				/*! bits: iir_filter[3:1] */
 	uint8_t ODR;					/*! bits: odr_sel[4:0] */
