@@ -1,22 +1,12 @@
 /*!
  * @file : bmp390.h
- *bu dosya şimdi mainde mi branch1 demi
+
  * Author: Yunus Emre KAYRA (github.com/YEK-Kayra)
  *
  * The MIT License (MIT)
  *
  * Copyright (c) 2023 TAISAT Turkish Artificial Intelligence Supported Autonomous Technologies
  *
- **/
-
-// Bekle beni CEM KARACA yazıyoruz kütüphaneyi biiznillah
-
-/*
- * $WİLL BE ADDED FEATURES$
- *
- * interrupt.h and .c files will be added
- * fifo.h and .c files will be added
- * fifo_flush register will be used , if you use soft reset , you don't forget to init the sensor again
  **/
 
 #ifndef INC_BMP390_H_
@@ -350,7 +340,7 @@ typedef struct{
 	float PAR_P10;
 	float PAR_P11;
 
-}BMP390_ProcessedCalibData_TypeDef;
+}BMP390_PrcsdCalibData_TypeDef;
 
 typedef struct{
 
@@ -440,7 +430,7 @@ typedef struct{
 
 	BMP390_RawCalibData_TypeDef Raw_NVM;
 
-	BMP390_ProcessedCalibData_TypeDef Prcd_NVM;
+	BMP390_PrcsdCalibData_TypeDef Prcd_NVM;
 
 	uint8_t CONFIG; 				/*! bits: iir_filter[3:1] */
 	uint8_t ODR;					/*! bits: odr_sel[4:0] */
