@@ -50,46 +50,49 @@ extern float  BMP390_gForce;
 /*!@name          BMP390 Registers   			    		    			  */
 /******************************************************************************/
 
-#define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions ==> bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
-#define BMP390_REG_STATUS    		0x03  /*Sensor Status Flags ==> bits: drdy_temp[6:6], drdy_press[5:5], cmd_rdy[4:4] (drdy:Data ready x)*/
 
-#define BMP390_REG_DATA_0    		0x04  /*24Bit pressure data of XLSB byte*/
-#define BMP390_REG_DATA_1    		0x05  /*24Bit pressure data of LSB 	byte*/
-#define BMP390_REG_DATA_2    		0x06  /*24Bit pressure data of MSB 	byte*/
-#define BMP390_REG_DATA_3    		0x07  /*24Bit temperature data of XLSB byte*/
-#define BMP390_REG_DATA_4    		0x08  /*24Bit temperature data of LSB byte*/
-#define BMP390_REG_DATA_5   		0x09  /*24Bit temperature data of MSB byte*/
+#define BMP390_REG_CONFIG		 	0x1F  /*Controls the IIR filter coefficients.
+ 	 	 	 	 	 	 	 	 	 	    bits :  iir_filter[3:1] */
 
-#define BMP390_REG_PWR_CTRL   		0x1B  /**Enables or disables pressure and temperature measurement.
- 	 	 	 	 	 	 	 	 	 	 	* bits : mode[5:4],temp_en[1:1], press_en[0:0]
- 	 	 	 	 	 	 	 	 	 	 	*
- 	 	 	 	 	 	 	 	 	 	 	* 		 mode ==> Sleep mode  [00]
- 	 	 	 	 	 	 	 	 	 	 	* 		 		  Forced mode [10]
- 	 	 	 	 	 	 	 	 	 	 	* 		 		  Normal mode [11]
- 	 	 	 	 	 	 	 	 	 	 	* */
+#define BMP390_REG_ODR   			0x1D  /*Set the configuration of the output data rates
+ 	 	 	 	 	 	 	 	 	 	 	bits :  odr_sel[4:0] */
 
+#define BMP390_REG_OSR   			0x1C  /*Controls the oversampling settings for pressure and temperature measurements.
+ 	 	 	 	 	 	 	 	 	 	 	bits :  osr_t[5:3](for temperature), osr_p[2:0](for pressure)*/
 
-#define BMP390_REG_OSR   			0x1C  /**Controls the oversampling settings for pressure and temperature measurements.
- 	 	 	 	 	 	 	 	 	 	 	* bits :  osr_t[5:3](for temperature), osr_p[2:0](for pressure)
- 	 	 	 	 	 	 	 	 	 	 	* */
+#define BMP390_REG_PWR_CTRL   		0x1B  /*Enables or disables pressure and temperature measurement.
+ 	 	 	 	 	 	 	 	 	 	    bits : mode[5:4],temp_en[1:1], press_en[0:0] */
 
-#define BMP390_REG_ODR   			0x1D  /**Set the configuration of the output data rates
- 	 	 	 	 	 	 	 	 	 	 	* bits :  odr_sel[4:0]
- 	 	 	 	 	 	 	 	 	 	 	* */
+#define BMP390_REG_IF_CONF   		0x1A  /*controls the serial interface settings.
+ 	 	 	 	 	 	 	 	 	 	    bits : i2c_wdt_sel[2:2],l i2c_wdt_en[1:1], spi3[0:0] */
 
-#define BMP390_REG_CONFIG		 	0x1F /**Controls the IIR filter coefficients.
- 	 	 	 	 	 	 	 	 	 	 	* bits :  iir_filter[3:1]
- 	 	 	 	 	 	 	 	 	 	 	* */
-
-#define BMP390_REG_FIFO_CONFIG_1	0x17 /**
- 	 	 	 	 	 	 	 	 	 	  * fifo_mode[0:0],fifo_stop_on_full[1:1],fifo_time_en[2:2],fifo_press_en[3:3],fifo_temp_en[4:4]
- 	 	 	 	 	 	 	 	 	 	  */
+#define BMP390_REG_INT_CTRL   		0x19  /*Interrupt configuration can be set in the “INT_CTRL” register.
+									  		bits : drdy_en[6:6], int_ds[5:5],
+									  			   ffull_en[4:4], fwtm_en[3:3],
+									 			   int_latch[2:2], int_level[1:1],
+									 			   int_od[0:0] */
 
 
-#define BMP390_REG_FIFO_CONFIG_2	0x18 /**
- 	 	 	 	 	 	 	 	 	 	  * fifo_subsampling[2:0], data_select[3:4]
- 	 	 	 	 	 	 	 	 	 	  */
+#define BMP390_REG_FIFO_CONFIG_1	0x17 /*FIFO frame content configuration.
+ 	 	 	 	 	 	 	 	 	 	   bits : fifo_mode[0:0],fifo_stop_on_full[1:1],fifo_time_en[2:2],fifo_press_en[3:3],fifo_temp_en[4:4]*/
 
+#define BMP390_REG_FIFO_CONFIG_2	0x18 /*extends the FIFO_CONFIG_1 register
+ 	 	 	 	 	 	 	 	 	 	  bits : fifo_subsampling[2:0], data_select[3:4] */
+
+
+#define BMP390_REG_SENSORTIME_0_3   0x0C  /*24Bit pressure MSB[23:16],LSB[15:8],XLSB[7:0]
+											bytes {SENSORTIME_2(0x0E),SENSORTIME_1(0x0D),SENSORTIME_0(0x0C)} */
+
+#define BMP390_REG_DATA_0_5    		0x04  /*24Bit pressure MSB[23:16],LSB[15:8],XLSB[7:0]
+											bytes {DATA2(0x06),DATA1(0x05),DATA0(0x04)}
+
+											24Bit temperature MSB[23:16],LSB[15:8],XLSB[7:0]
+											bytes {DATA5(0x09),DATA4(0x08),DATA3(0x07)} */
+
+#define BMP390_REG_STATUS    		0x03  /*Sensor Status Flags,(drdy:Data ready) bits: drdy_temp[6:6],
+											drdy_press[5:5], cmd_rdy[4:4] */
+
+#define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions, bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
 
 
 
