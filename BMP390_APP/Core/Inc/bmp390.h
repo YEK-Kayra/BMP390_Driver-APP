@@ -9,8 +9,8 @@
  *
  **/
 
-#ifndef INC_BMP390_H_
-#define INC_BMP390_H_
+#ifndef BMP390_H_
+#define BMP390_H_
 
 
 /******************************************************************************/
@@ -39,9 +39,9 @@ extern float  BMP390_gForce;
  **/
 
 /******************************************************************************/
-/*!@name          BMP390 Registers   			    		    			  */
+/*!@name              BMP390 DEFINITION         			    		      */
 /******************************************************************************/
-
+/*******************SENSOR REGISTER DEFINITION **********************/
 
 #define BMP390_REG_CONFIG		 	0x1F  /*Controls the IIR filter coefficients.
  	 	 	 	 	 	 	 	 	 	    bits :  iir_filter[3:1] */
@@ -99,6 +99,9 @@ extern float  BMP390_gForce;
 											drdy_press[5:5], cmd_rdy[4:4] */
 
 #define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions, bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
+
+/*******************GENERAL DEFINITION **********************/
+#define BMP390_StartAdd_CalibCoeff  0x31
 
 
 
@@ -349,20 +352,20 @@ typedef struct{
 	/**
 	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
 	 */
-	uint16_t NVM_PAR_T1;
-	uint16_t NVM_PAR_T2;
-	int16_t NVM_PAR_T3;
-	int16_t NVM_PAR_P1;
-	int16_t NVM_PAR_P2;
-	int16_t NVM_PAR_P3;
-	int16_t NVM_PAR_P4;
-	uint16_t NVM_PAR_P5;
-	uint16_t NVM_PAR_P6;
-	int16_t NVM_PAR_P7;
-	int16_t NVM_PAR_P8;
-	int16_t NVM_PAR_P9;
-	int16_t NVM_PAR_P10;
-	int16_t NVM_PAR_P11;
+	int32_t NVM_PAR_T1;
+	int32_t NVM_PAR_T2;
+	int32_t NVM_PAR_T3;
+	int32_t NVM_PAR_P1;
+	int32_t NVM_PAR_P2;
+	int32_t NVM_PAR_P3;
+	int32_t NVM_PAR_P4;
+	int32_t NVM_PAR_P5;
+	int32_t NVM_PAR_P6;
+	int32_t NVM_PAR_P7;
+	int32_t NVM_PAR_P8;
+	int32_t NVM_PAR_P9;
+	int32_t NVM_PAR_P10;
+	int32_t NVM_PAR_P11;
 
 }BMP390_RawCalibData_TypeDef;
 
@@ -426,7 +429,7 @@ typedef struct{
 
 	BMP390_Params_t BMP390_Params;
 
-	uint16_t BMP280_I2C_ADDRESS;
+	uint16_t BMP390_I2C_ADDRESS;
 
 	I2C_HandleTypeDef *i2c;
 
@@ -470,12 +473,11 @@ typedef struct{
 /*!@name          	BMP390 Function Prototypes            			  		  */
 /******************************************************************************/
 
-void BMP390_Init();
+_Bool BMP390_Init(BMP390_HandleTypeDef *BMP390);
 
-void BMP390_Config_CalibDatas();
+_Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390);
 
-void BMP390_Set_DefaultParams();
-
+_Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390);
 
 
 #endif /* INC_BMP390_H_ */

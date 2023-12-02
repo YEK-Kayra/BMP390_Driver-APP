@@ -42,20 +42,41 @@
 
 #include "bmp390.h"
 
-void BMP390_Init(){
+_Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
-	BMP390_Set_DefaultParams();
+	 if(HAL_I2C_IsDeviceReady(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, 10, 1000) != HAL_OK){
+		 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+	 }
 
-	BMP390_Config_CalibDatas();
+
+	 BMP390_Get_RawCalibCoeff(BMP390);
+
+	 BMP390_Calc_PrcsdCalibrationCoeff(BMP390);
+
+return true;
 
 }
 
-void BMP390_Set_DefaultParams(){
+_Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390){
+
+	uint8_t BMP390_CalibCoeff[21];
+	uint8_t cnt = 0;
+
+	HAL_I2C_Mem_Read(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_StartAdd_CalibCoeff, 1, &BMP390_CalibCoeff[0], 21, 1000);
+	BMP390->Raw_NVM.NVM_PAR_T1 = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_T2 = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_T3 = (int8_t)((BMP390_CalibCoeff[cnt])); cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P1 = (int16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P2 = (int16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P3 = (int16_t)((BMP390_CalibCoeff[cnt])); cnt+=1;
 
 
+return true;
 }
 
-void BMP390_Config_CalibDatas(){
+_Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390){
 
 
+
+return true;
 }

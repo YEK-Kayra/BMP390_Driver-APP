@@ -100,6 +100,15 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+#ifdef BMP390_H_
+
+  BMP390.BMP390_I2C_ADDRESS = BMP390_I2C_ADDRESS_L;
+  BMP390.i2c = &hi2c1;
+  BMP390_Init(&BMP390);
+
+
+#endif
+
 
   /* USER CODE END 2 */
 
