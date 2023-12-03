@@ -102,8 +102,13 @@ int main(void)
 
 #ifdef BMP390_H_
 
+  /**
+   * Ref_Alt_Sel is a selection; false value : it sets the reference altitude to the current location (0 meters)
+   * 							 true value  : it sets the reference altitude to sea level
+   */
   BMP390.BMP390_I2C_ADDRESS = BMP390_I2C_ADDRESS_L;
   BMP390.i2c = &hi2c1;
+  BMP390.Ref_Alt_Sel = false;
   BMP390_Init(&BMP390);
 
 

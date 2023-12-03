@@ -65,8 +65,12 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 	 BMP390->ODR 	= (BMP390->Params.odr);
 
 	 BMP390->OSR = ((BMP390->Params.press_osrs)<<0) |
-			 	   ((BMP390->Params.temp_osrs)<<3) ;
+			 	   ((BMP390->Params.temp_osrs)<<3);
 
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_PWR_CTRL , 1, &BMP390->PWR_CTRL, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
 
 return true;
 

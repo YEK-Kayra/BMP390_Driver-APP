@@ -463,6 +463,8 @@ typedef struct{
 	uint8_t FIFO_WTM_0;				/*! bits: fifo_water_mark_0_7[7:0] */
 	uint8_t FIFO_WTM_1;				/*! bits: fifo_water_mark_8[0:0] */
 
+	_Bool Ref_Alt_Sel;
+
 
 
 
