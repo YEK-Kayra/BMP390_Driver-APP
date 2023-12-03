@@ -374,61 +374,61 @@ typedef struct{
 
 typedef struct {
 
-	BMP390_Mode_TypeDef bmp390Mode;
-	BMP390_ODR_TypeDef	bmp390_odr;
-	BMP390_FilterCoef_TypeDef bmp390_filtercoef;
+	BMP390_Mode_TypeDef mode;
+	BMP390_ODR_TypeDef	odr;
+	BMP390_FilterCoef_TypeDef filtercoef;
 
 	/**
 	 * These two of them are about oversampling settings register (OSR), Variables of PWR_CTRL variable
 	 */
-	BMP390_Osrs_TypeDef bmp390_press_osrs;
-	BMP390_Osrs_TypeDef bmp390_temp_osrs;
+	BMP390_Osrs_TypeDef press_osrs;
+	BMP390_Osrs_TypeDef temp_osrs;
 
 	/**
 	 * These two of them are about eneable disable measurement , Variables of PWR_CTRL variable
 	 */
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_meas_press;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_meas_temp;
+	BMP390_REG_Stat_bits_TypeDef stat_meas_press;
+	BMP390_REG_Stat_bits_TypeDef stat_meas_temp;
 
 	/**
 	 * These three of them are about Interface Configuration register (IF_CONF)
 	 */
-	BMP390_SPI_X_TypeDef bmp390_spi_x;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_wdt;
-	BMP390_I2C_Wdt_Sel_TypeDef bmp390_wdt_type;
+	BMP390_SPI_X_TypeDef spi_x;
+	BMP390_REG_Stat_bits_TypeDef stat_wdt;
+	BMP390_I2C_Wdt_Sel_TypeDef wdt_type;
 
 	/**
 	 * These five of them are about FIFO Configuration_1 register (FIFO_CONFIG_1)
 	 */
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_stopFull;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_press;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_temp;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_fifo_time;
+	BMP390_REG_Stat_bits_TypeDef stat_fifo;
+	BMP390_REG_Stat_bits_TypeDef stat_fifo_stopFull;
+	BMP390_REG_Stat_bits_TypeDef stat_fifo_press;
+	BMP390_REG_Stat_bits_TypeDef stat_fifo_temp;
+	BMP390_REG_Stat_bits_TypeDef stat_fifo_time;
 
 	/**
 	 * These two of them are about FIFO Configuration_2 register (FIFO_CONFIG_2)
 	 */
-	BMP390_Fifo_Subsampling_TypeDef bmp390_fifo_subs;
-	BMP390_Fifo_DataSelect_TypeDef bmp390_fifo_sel;
+	BMP390_Fifo_Subsampling_TypeDef fifo_subs;
+	BMP390_Fifo_DataSelect_TypeDef fifo_sel;
 
 	/**
 	 * These seven of them are about Interrupt configuration register (INT_CTRL)
 	 */
-	BMP390_Int_Out_TypeDef bmp390_ınt_out;
-	BMP390_Int_Level_TypeDef bmp390_ınt_level;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_latch;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fwtm;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_fful;
-	BMP390_Int_Ds_TypeDef bmp390_int_ds;
-	BMP390_REG_Stat_bits_TypeDef bmp390_stat_int_drdy;
+	BMP390_Int_Out_TypeDef int_out;
+	BMP390_Int_Level_TypeDef int_level;
+	BMP390_REG_Stat_bits_TypeDef stat_int_latch;
+	BMP390_REG_Stat_bits_TypeDef stat_int_fwtm;
+	BMP390_REG_Stat_bits_TypeDef stat_int_fful;
+	BMP390_Int_Ds_TypeDef int_ds;
+	BMP390_REG_Stat_bits_TypeDef stat_int_drdy;
 
 }BMP390_Params_t;
 
 
 typedef struct{
 
-	BMP390_Params_t BMP390_Params;
+	BMP390_Params_t Params;
 
 	uint16_t BMP390_I2C_ADDRESS;
 
@@ -479,6 +479,8 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390);
 _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390);
 
 _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390);
+
+_Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390);
 
 
 #endif /* INC_BMP390_H_ */
