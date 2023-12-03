@@ -48,7 +48,6 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 		 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 	 }
 
-
 	 BMP390_Get_RawCalibCoeff(BMP390);
 
 	 BMP390_Calc_PrcsdCalibrationCoeff(BMP390);
@@ -63,20 +62,42 @@ _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390){
 	uint8_t cnt = 0;
 
 	HAL_I2C_Mem_Read(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_StartAdd_CalibCoeff, 1, &BMP390_CalibCoeff[0], 21, 1000);
-	BMP390->Raw_NVM.NVM_PAR_T1 = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
-	BMP390->Raw_NVM.NVM_PAR_T2 = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
-	BMP390->Raw_NVM.NVM_PAR_T3 = (int8_t)((BMP390_CalibCoeff[cnt])); cnt+=1;
-	BMP390->Raw_NVM.NVM_PAR_P1 = (int16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
-	BMP390->Raw_NVM.NVM_PAR_P2 = (int16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8)); cnt+=2;
-	BMP390->Raw_NVM.NVM_PAR_P3 = (int16_t)((BMP390_CalibCoeff[cnt])); cnt+=1;
 
+	BMP390->Raw_NVM.NVM_PAR_T1  = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_T2  = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_T3  = (int8_t)((BMP390_CalibCoeff[cnt])); 								     cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P1  = (int16_t)((BMP390_CalibCoeff[cnt])  | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P2  = (int16_t)((BMP390_CalibCoeff[cnt])  | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P3  = (int8_t)((BMP390_CalibCoeff[cnt])); 								     cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P4  = (int8_t)((BMP390_CalibCoeff[cnt])); 								     cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P5  = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P6  = (uint16_t)((BMP390_CalibCoeff[cnt]) | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P7  = (int8_t)((BMP390_CalibCoeff[cnt])); 									 cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P8  = (int8_t)((BMP390_CalibCoeff[cnt]));  									 cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P9  = (int16_t)((BMP390_CalibCoeff[cnt])  | (BMP390_CalibCoeff[cnt+1]<<8));  cnt+=2;
+	BMP390->Raw_NVM.NVM_PAR_P10 = (int8_t)((BMP390_CalibCoeff[cnt])); 									 cnt+=1;
+	BMP390->Raw_NVM.NVM_PAR_P11 = (int8_t)((BMP390_CalibCoeff[cnt]));
 
 return true;
+
 }
 
 _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390){
 
-
+	BMP390->Prcsd_NVM.PAR_T1 = (BMP390->Raw_NVM.NVM_PAR_T1 / pow(2,-8));
+	BMP390->Prcsd_NVM.PAR_T2 = (BMP390->Raw_NVM.NVM_PAR_T2 / pow(2,30));
+	BMP390->Prcsd_NVM.PAR_T3 = (BMP390->Raw_NVM.NVM_PAR_T3 / pow(2,48));
+	BMP390->Prcsd_NVM.PAR_P1 = ((BMP390->Raw_NVM.NVM_PAR_P1 - pow(2,14)) / pow(2,20));
+	BMP390->Prcsd_NVM.PAR_P2 = ((BMP390->Raw_NVM.NVM_PAR_P2 - pow(2,14)) / pow(2,29));
+	BMP390->Prcsd_NVM.PAR_P3 = (BMP390->Raw_NVM.NVM_PAR_P3 / pow(2,32));
+	BMP390->Prcsd_NVM.PAR_P4 = (BMP390->Raw_NVM.NVM_PAR_P4 / pow(2,37));
+	BMP390->Prcsd_NVM.PAR_P5 = (BMP390->Raw_NVM.NVM_PAR_P5 / pow(2,-3));
+	BMP390->Prcsd_NVM.PAR_P6 = (BMP390->Raw_NVM.NVM_PAR_P6 / pow(2,6));
+	BMP390->Prcsd_NVM.PAR_P7 = (BMP390->Raw_NVM.NVM_PAR_P7 / pow(2,8));
+	BMP390->Prcsd_NVM.PAR_P8 = (BMP390->Raw_NVM.NVM_PAR_P8 / pow(2,15));
+	BMP390->Prcsd_NVM.PAR_P9 = (BMP390->Raw_NVM.NVM_PAR_P9 / pow(2,48));
+	BMP390->Prcsd_NVM.PAR_P10 = (BMP390->Raw_NVM.NVM_PAR_P10 / pow(2,48));
+	BMP390->Prcsd_NVM.PAR_P11 = (BMP390->Raw_NVM.NVM_PAR_P11 / pow(2,65));
 
 return true;
 }

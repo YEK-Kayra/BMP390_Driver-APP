@@ -19,6 +19,7 @@
 #include "main.h"
 #include "stdbool.h"
 #include "stdint.h"
+#include "math.h"
 
 /******************************************************************************/
 /*!@name          BMP390 External Variable	     	                          */
@@ -352,20 +353,20 @@ typedef struct{
 	/**
 	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
 	 */
-	int32_t NVM_PAR_T1;
-	int32_t NVM_PAR_T2;
-	int32_t NVM_PAR_T3;
-	int32_t NVM_PAR_P1;
-	int32_t NVM_PAR_P2;
-	int32_t NVM_PAR_P3;
-	int32_t NVM_PAR_P4;
-	int32_t NVM_PAR_P5;
-	int32_t NVM_PAR_P6;
-	int32_t NVM_PAR_P7;
-	int32_t NVM_PAR_P8;
-	int32_t NVM_PAR_P9;
-	int32_t NVM_PAR_P10;
-	int32_t NVM_PAR_P11;
+	uint16_t NVM_PAR_T1;
+	uint16_t NVM_PAR_T2;
+	int8_t NVM_PAR_T3;
+	int16_t NVM_PAR_P1;
+	int16_t NVM_PAR_P2;
+	int8_t NVM_PAR_P3;
+	int8_t NVM_PAR_P4;
+	uint16_t NVM_PAR_P5;
+	uint16_t NVM_PAR_P6;
+	int8_t NVM_PAR_P7;
+	int8_t NVM_PAR_P8;
+	int16_t NVM_PAR_P9;
+	int8_t NVM_PAR_P10;
+	int8_t NVM_PAR_P11;
 
 }BMP390_RawCalibData_TypeDef;
 

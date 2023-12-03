@@ -1,3 +1,3 @@
 ../Core/Src/bmp390.c:45:7:BMP390_Init	2
-../Core/Src/bmp390.c:60:7:BMP390_Get_RawCalibCoeff	2
-../Core/Src/bmp390.c:76:7:BMP390_Calc_PrcsdCalibrationCoeff	1
+../Core/Src/bmp390.c:59:7:BMP390_Get_RawCalibCoeff	1
+../Core/Src/bmp390.c:85:7:BMP390_Calc_PrcsdCalibrationCoeff	1
