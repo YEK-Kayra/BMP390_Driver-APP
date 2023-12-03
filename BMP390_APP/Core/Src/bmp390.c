@@ -45,12 +45,28 @@
 _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 if(HAL_I2C_IsDeviceReady(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, 10, 1000) != HAL_OK){
+
 		 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+
 	 }
 
 	 BMP390_Get_RawCalibCoeff(BMP390);
 
 	 BMP390_Calc_PrcsdCalibrationCoeff(BMP390);
+
+	 BMP390_Set_DefaultParams(BMP390);
+
+	 BMP390->PWR_CTRL = ((BMP390->BMP390_Params.bmp390Mode)<<4) |
+			 	 	 	((BMP390->BMP390_Params.bmp390_stat_meas_temp)<<1)|
+			 	 	 	((BMP390->BMP390_Params.bmp390_stat_meas_press)<<0);
+
+
+	 BMP390->CONFIG = ((BMP390->BMP390_Params.bmp390_filtercoef)<<1);
+	 BMP390->ODR = (BMP390->BMP390_Params.bmp390_odr);
+
+	 BMP390->OSR = ((BMP390->BMP390_Params.bmp390_press_osrs)<<0) |
+			 	   ((BMP390->BMP390_Params.bmp390_temp_osrs)<<3) ;
+
 
 return true;
 
@@ -101,3 +117,17 @@ _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390){
 
 return true;
 }
+
+_Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390){
+
+	BMP390->BMP390_Params.bmp390Mode = BMP390_Mode_Normal;
+	BMP390->BMP390_Params.bmp390_stat_meas_press = Enable;
+	BMP390->BMP390_Params.bmp390_stat_meas_temp = Enable;
+	BMP390->BMP390_Params.bmp390_press_osrs = BMP390_Oversampling_X8 ;
+	BMP390->BMP390_Params.bmp390_temp_osrs= BMP390_Oversampling_X2 ;
+	BMP390->BMP390_Params.bmp390_filtercoef = BMP390_Filter_Coef_3;
+	BMP390->BMP390_Params.bmp390_odr = BMP390_ODR_50;
+
+return true;
+}
+

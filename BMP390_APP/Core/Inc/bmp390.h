@@ -372,7 +372,7 @@ typedef struct{
 
 //int_ctrl için
 
-typedef struct { //registerlara kayıt için toplican bu parametreleri
+typedef struct {
 
 	BMP390_Mode_TypeDef bmp390Mode;
 	BMP390_ODR_TypeDef	bmp390_odr;
