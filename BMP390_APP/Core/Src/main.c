@@ -47,9 +47,9 @@ I2C_HandleTypeDef hi2c1;
 
 BMP390_HandleTypeDef BMP390;
 
-double BMP390_Press;
-double BMP390_Temp;
-float  BM390_VertAlt;
+float  BMP390_Press;
+float  BMP390_Temp;
+float  BMP390_VertAlt;
 float  BMP390_VertAcc;
 float  BMP390_VertSpd;
 float  BMP390_gForce;
@@ -110,6 +110,11 @@ int main(void)
   BMP390.i2c = &hi2c1;
   BMP390.Ref_Alt_Sel = false;
   BMP390_Init(&BMP390);
+
+  BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
+		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
+						  &BMP390_VertAcc, &BMP390_VertSpd,
+						  &BMP390_gForce);
 
 
 #endif

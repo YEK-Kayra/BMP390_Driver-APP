@@ -2,3 +2,6 @@
 ../Core/Src/bmp390.c:79:7:BMP390_Get_RawCalibCoeff	1
 ../Core/Src/bmp390.c:105:7:BMP390_Calc_PrcsdCalibrationCoeff	1
 ../Core/Src/bmp390.c:125:7:BMP390_Set_DefaultParams	1
+../Core/Src/bmp390.c:139:7:BMP390_Get_SensorValues	1
+../Core/Src/bmp390.c:166:7:BMP390_Calc_PrcsdPress	1
+../Core/Src/bmp390.c:170:7:BMP390_Calc_PrcsdTemp	1

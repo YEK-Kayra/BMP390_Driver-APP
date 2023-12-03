@@ -24,12 +24,14 @@
 /******************************************************************************/
 /*!@name          BMP390 External Variable	     	                          */
 /******************************************************************************/
-extern double BMP390_Press;
-extern double BMP390_Temp;
+
+extern float BMP390_Press;
+extern float BMP390_Temp;
 extern float  BM390_VertAlt;
 extern float  BMP390_VertAcc;
 extern float  BMP390_VertSpd;
 extern float  BMP390_gForce;
+
 
 /**
  * G force = It's a thing that creates the feeling of heaviness
@@ -102,7 +104,8 @@ extern float  BMP390_gForce;
 #define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions, bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
 
 /*******************GENERAL DEFINITION **********************/
-#define BMP390_StartAdd_CalibCoeff  0x31
+#define BMP390_StartAdd_CalibCoeff 			    0x31
+#define BMP390_StartAdd_MSB_LSB_XLSB_PT  		0x04
 
 
 
@@ -331,20 +334,20 @@ typedef struct{
 	/**
 	 * PAR_T/P parameters are processed data. We use them when calculating Pressure, Temperature compensation
 	 */
-	float PAR_T1;
-	float PAR_T2;
-	float PAR_T3;
-	float PAR_P1;
-	float PAR_P2;
-	float PAR_P3;
-	float PAR_P4;
-	float PAR_P5;
-	float PAR_P6;
-	float PAR_P7;
-	float PAR_P8;
-	float PAR_P9;
-	float PAR_P10;
-	float PAR_P11;
+	float T1;
+	float T2;
+	float T3;
+	float P1;
+	float P2;
+	float P3;
+	float P4;
+	float P5;
+	float P6;
+	float P7;
+	float P8;
+	float P9;
+	float P10;
+	float P11;
 
 }BMP390_PrcsdCalibData_TypeDef;
 
@@ -353,20 +356,20 @@ typedef struct{
 	/**
 	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
 	 */
-	uint16_t NVM_PAR_T1;
-	uint16_t NVM_PAR_T2;
-	int8_t NVM_PAR_T3;
-	int16_t NVM_PAR_P1;
-	int16_t NVM_PAR_P2;
-	int8_t NVM_PAR_P3;
-	int8_t NVM_PAR_P4;
-	uint16_t NVM_PAR_P5;
-	uint16_t NVM_PAR_P6;
-	int8_t NVM_PAR_P7;
-	int8_t NVM_PAR_P8;
-	int16_t NVM_PAR_P9;
-	int8_t NVM_PAR_P10;
-	int8_t NVM_PAR_P11;
+	uint16_t T1;
+	uint16_t T2;
+	int8_t T3;
+	int16_t P1;
+	int16_t P2;
+	int8_t P3;
+	int8_t P4;
+	uint16_t P5;
+	uint16_t P6;
+	int8_t P7;
+	int8_t P8;
+	int16_t P9;
+	int8_t P10;
+	int8_t P11;
 
 }BMP390_RawCalibData_TypeDef;
 
@@ -483,6 +486,19 @@ _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390);
 _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390);
 
 _Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390);
+
+_Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
+							 float *BMP390_Temp,float *BMP390_VertAlt,
+							 float *BMP390_VertAcc, float *BMP390_VertSpd,
+							 float *BMP390_gForce);
+
+float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress);
+float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp);
+//float BMP390_Calc_VertAcc();
+//float BMP390_Calc_VertSpd();
+//float BMP390_Calc_gForce();
+//float BMP390_Calc_VertAlt();
+
 
 
 #endif /* INC_BMP390_H_ */
