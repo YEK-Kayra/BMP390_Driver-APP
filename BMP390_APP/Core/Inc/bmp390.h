@@ -25,9 +25,9 @@
 /*!@name          BMP390 External Variable	     	                          */
 /******************************************************************************/
 
-extern float BMP390_Press;
-extern float BMP390_Temp;
-extern float  BM390_VertAlt;
+extern float  BMP390_Press;
+extern float  BMP390_Temp;
+extern float  BMP390_VertAlt;
 extern float  BMP390_VertAcc;
 extern float  BMP390_VertSpd;
 extern float  BMP390_gForce;
@@ -104,9 +104,19 @@ extern float  BMP390_gForce;
 #define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions, bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
 
 /*******************GENERAL DEFINITION **********************/
+
+/**!These macros define the address that is used at i2c communication*/
 #define BMP390_StartAdd_CalibCoeff 			    0x31
 #define BMP390_StartAdd_MSB_LSB_XLSB_PT  		0x04
 
+/**!These macros provide to calculate the altitude of BMP390 */
+// The Formula : h = (T0 / L) * (1 - (P0 / P) * (g / (R * L)))
+#define SeaLevelPress  101325 // (P0)Unit : Pascal
+#define SeaLevelTemp   288.15 // (TO)Unit : Kelvin
+#define GradientTemp   0.0065 // (L) Unit : Kelvin/Meter
+#define GravityAccel   9.80665// (g) Unit : Meter/second^2
+#define GasCoefficient 287.05 // (R) Unit : Joule/Kelvin*Kilogram
+							  // (P) is current pressure(Unit : Pascal), (h) is current altitude(Unit : Meter)
 
 
 /******************************************************************************/
@@ -466,7 +476,15 @@ typedef struct{
 	uint8_t FIFO_WTM_0;				/*! bits: fifo_water_mark_0_7[7:0] */
 	uint8_t FIFO_WTM_1;				/*! bits: fifo_water_mark_8[0:0] */
 
-	_Bool Ref_Alt_Sel;
+
+
+	char Ref_Alt_Sel;				/**
+	   	   	   	   	   	   	   	   	  * Ref_Alt_Sel is a selection;  For 'm' : it sets the reference altitude to the current location (0 meters)
+	   	   	   	   	   	   	   	   	  * 							 For 'M' : it sets the reference altitude to sea level
+	   	   	   	   	   	   	   	   	  */
+
+	float TemporaryAltitude;
+
 
 
 
@@ -492,12 +510,17 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
+
+
 float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);
 float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp);
+float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press);
+float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);
+
+
 //float BMP390_Calc_VertAcc();
 //float BMP390_Calc_VertSpd();
 //float BMP390_Calc_gForce();
-//float BMP390_Calc_VertAlt();
 
 
 

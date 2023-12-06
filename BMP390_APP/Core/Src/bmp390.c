@@ -32,11 +32,6 @@
  */
 
 /**
- * THE PLANS
- * Press Filter coef ==> 8
- * Oversampling press ==> x8 , Oversampling temp ==> x2
- * Odr value ==> 50Hz
- *
  * NOTE ==> if our sensor does soft reset. All params of the sensor are cleared. We have to init our sensor properly again.
  */
 
@@ -56,12 +51,14 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 BMP390_Set_DefaultParams(BMP390);
 
+
+
 	 BMP390->PWR_CTRL = ((BMP390->Params.mode)<<4) |
 			 	 	 	((BMP390->Params.stat_meas_temp)<<1)|
 			 	 	 	((BMP390->Params.stat_meas_press)<<0);
 
-
 	 BMP390->CONFIG = ((BMP390->Params.filtercoef)<<1);
+
 	 BMP390->ODR 	= (BMP390->Params.odr);
 
 	 BMP390->OSR = ((BMP390->Params.press_osrs)<<0) |
@@ -71,6 +68,19 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
+
+
+	 if(BMP390->Ref_Alt_Sel == 'm'){
+
+		 BMP390->TemporaryAltitude = 0.0; //We set zero at the first time because gets the real place altitude value
+		 BMP390->TemporaryAltitude = BMP390_Calc_TemporaryAltitude(BMP390, &BMP390_VertAlt);
+
+	 }
+	 else if(BMP390->Ref_Alt_Sel == 'M'){
+
+		 BMP390->TemporaryAltitude = 0.0;
+
+	 }
 
 return true;
 
@@ -153,7 +163,7 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 
 	*BMP390_Temp  	= BMP390_Calc_PrcsdTemp(BMP390,rawTemp);
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
-	*BMP390_VertAlt = BMP390_Calc_VertAlt();
+	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
 	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
 	//*BMP390_VertSpd = BMP390_Calc_VertSpd();
@@ -205,3 +215,29 @@ float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, fl
 }
 
 
+float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press){
+
+	return (((SeaLevelTemp / GradientTemp)
+			* (1 - pow((*BMP390_Press / SeaLevelPress),((GasCoefficient * GradientTemp)/GravityAccel))))
+			- (BMP390->TemporaryAltitude));
+
+}
+
+
+float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt){
+
+	 float tempAltitude = 0;
+	 for(int cnt = 0 ; cnt < 20 ; cnt++){
+
+		 BMP390_Get_SensorValues(BMP390, &BMP390_Press,
+			  		  	  	  	 &BMP390_Temp, BMP390_VertAlt,
+			  					 &BMP390_VertAcc, &BMP390_VertSpd,
+			  					 &BMP390_gForce);
+
+		 tempAltitude = (float)(tempAltitude + (float)((*BMP390_VertAlt) * (0.05)));
+
+	  }
+
+	 return tempAltitude;
+
+}

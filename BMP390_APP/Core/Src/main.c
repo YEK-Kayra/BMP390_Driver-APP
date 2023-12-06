@@ -103,19 +103,13 @@ int main(void)
 #ifdef BMP390_H_
 
   /**
-   * Ref_Alt_Sel is a selection; false value : it sets the reference altitude to the current location (0 meters)
-   * 							 true value  : it sets the reference altitude to sea level
+   * Ref_Alt_Sel is a selection;  For 'm' : it sets the reference altitude to the current location (0 meters)
+   * 							  For 'M' : it sets the reference altitude to sea level
    */
   BMP390.BMP390_I2C_ADDRESS = BMP390_I2C_ADDRESS_L;
   BMP390.i2c = &hi2c1;
-  BMP390.Ref_Alt_Sel = false;
+  BMP390.Ref_Alt_Sel = 'm';
   BMP390_Init(&BMP390);
-
-  BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
-		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
-						  &BMP390_VertAcc, &BMP390_VertSpd,
-						  &BMP390_gForce);
-
 
 #endif
 
@@ -129,6 +123,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
+	  		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
+	  						  &BMP390_VertAcc, &BMP390_VertSpd,
+	  						  &BMP390_gForce);
 
 
   }
