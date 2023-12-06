@@ -72,13 +72,13 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 if(BMP390->Ref_Alt_Sel == 'm'){
 
-		 BMP390->TemporaryAltitude = 0.0; //We set zero at the first time because gets the real place altitude value
-		 BMP390->TemporaryAltitude = BMP390_Calc_TemporaryAltitude(BMP390, &BMP390_VertAlt);
+		 BMP390->FixedAltitude = 0.0; //We set zero at the first time because gets the real place altitude value
+		 BMP390->FixedAltitude = BMP390_Calc_TemporaryAltitude(BMP390, &BMP390_VertAlt);
 
 	 }
 	 else if(BMP390->Ref_Alt_Sel == 'M'){
 
-		 BMP390->TemporaryAltitude = 0.0;
+		 BMP390->FixedAltitude = 0.0;
 
 	 }
 
@@ -165,10 +165,10 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
-	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
+	*BMP390_VertAcc = BMP390_Calc_VertAcc();
 	//*BMP390_VertSpd = BMP390_Calc_VertSpd();
 	//*BMP390_gForce	= BMP390_Calc_gForce();
-	//
+
 
 return true;
 }
@@ -219,7 +219,7 @@ float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press){
 
 	return (((SeaLevelTemp / GradientTemp)
 			* (1 - pow((*BMP390_Press / SeaLevelPress),((GasCoefficient * GradientTemp)/GravityAccel))))
-			- (BMP390->TemporaryAltitude));
+			- (BMP390->FixedAltitude));
 
 }
 
@@ -241,3 +241,24 @@ float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_
 	 return tempAltitude;
 
 }
+
+
+//****************Genel Algoritma defterde yazıldığı gibi olacak kesmeler kullanılacak******************/
+//Genel 1 saniyelik kesme oluşturma fonksiyonu ayarlanmalı kullanıcıyı uğraştırmadan
+// V = (X1 - X0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_VertSpd(){
+
+}
+
+// a = (V1 - V0)/gerçek 1 saniye hızı verecek
+//
+float BMP390_Calc_VertAcc(){
+
+}
+
+//Aldığın ivme değerlerini /g ye bölerek üstüne bir de nesne ağırlığı ile çarparak nesnenin yenidiği g kuvvetini hesap edecek
+//Bu fonksiyonda saniyede 1 kez çalışacak.
+float BMP390_Calc_gForce(){
+
+}
+

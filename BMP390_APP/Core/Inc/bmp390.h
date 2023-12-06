@@ -483,7 +483,7 @@ typedef struct{
 	   	   	   	   	   	   	   	   	  * 							 For 'M' : it sets the reference altitude to sea level
 	   	   	   	   	   	   	   	   	  */
 
-	float TemporaryAltitude;
+	float FixedAltitude;
 
 
 
@@ -518,9 +518,9 @@ float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press);
 float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);
 
 
-//float BMP390_Calc_VertAcc();
-//float BMP390_Calc_VertSpd();
-//float BMP390_Calc_gForce();
+float BMP390_Calc_VertAcc(float *BMP390_VertAlt);
+float BMP390_Calc_VertSpd();
+float BMP390_Calc_gForce();
 
 
 
