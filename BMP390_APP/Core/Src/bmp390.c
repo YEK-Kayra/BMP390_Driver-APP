@@ -151,26 +151,24 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	rawTemp  = ((MSB_LSB_XLSB_PT[5])<<16)  | ((MSB_LSB_XLSB_PT[4])<<8) | ((MSB_LSB_XLSB_PT[3])<<0);
 
 
-	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress);
 	*BMP390_Temp  	= BMP390_Calc_PrcsdTemp(BMP390,rawTemp);
+	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
+	*BMP390_VertAlt = BMP390_Calc_VertAlt();
 
 	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
 	//*BMP390_VertSpd = BMP390_Calc_VertSpd();
 	//*BMP390_gForce	= BMP390_Calc_gForce();
-	//*BMP390_VertAlt = BMP390_Calc_VertAlt();
+	//
 
 return true;
 }
 
 
-float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress){
-
-}
-
 float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp){
 
 	float partial_data1;
 	float partial_data2;
+
 
 	partial_data1 = (float)(rawTemp - BMP390->Prcsd_NVM.T1);
 	partial_data2 = (float)(partial_data1 * BMP390->Prcsd_NVM.T2);
@@ -178,3 +176,32 @@ float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp){
 	return (partial_data2 + (partial_data1 * partial_data1) * BMP390->Prcsd_NVM.T3);
 
 }
+
+float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp){
+
+	float partial_data1;
+	float partial_data2;
+	float partial_data3;
+	float partial_data4;
+	float partial_out1;
+	float partial_out2;
+
+
+	partial_data1 = BMP390->Prcsd_NVM.P6 * (*(BMP390_Temp));
+	partial_data2 = BMP390->Prcsd_NVM.P7 * ((*(BMP390_Temp)) * (*(BMP390_Temp)));
+	partial_data3 = BMP390->Prcsd_NVM.P8 * ((*(BMP390_Temp)) * (*(BMP390_Temp)) * (*(BMP390_Temp)));
+	partial_out1 =  BMP390->Prcsd_NVM.P5 + partial_data1 + partial_data2 + partial_data3;
+	partial_data1 = BMP390->Prcsd_NVM.P2 * (*(BMP390_Temp));
+	partial_data2 = BMP390->Prcsd_NVM.P3 * ((*(BMP390_Temp)) * (*(BMP390_Temp)));
+	partial_data3 = BMP390->Prcsd_NVM.P4 * ((*(BMP390_Temp)) * (*(BMP390_Temp)) * (*(BMP390_Temp)));
+	partial_out2 = (float)rawPress * (BMP390->Prcsd_NVM.P1 + partial_data1 + partial_data2 + partial_data3);
+	partial_data1 = (float)rawPress * (float)rawPress;
+	partial_data2 = BMP390->Prcsd_NVM.P9 + BMP390->Prcsd_NVM.P10 * (*(BMP390_Temp));
+	partial_data3 = partial_data1 * partial_data2;
+	partial_data4 = partial_data3 + ((float)rawPress * (float)rawPress * (float)rawPress) * BMP390->Prcsd_NVM.P11;
+
+	return partial_out1 + partial_out2 + partial_data4;
+
+}
+
+

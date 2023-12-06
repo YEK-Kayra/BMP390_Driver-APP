@@ -492,7 +492,7 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
-float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress);
+float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);
 float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp);
 //float BMP390_Calc_VertAcc();
 //float BMP390_Calc_VertSpd();
