@@ -32,6 +32,7 @@ extern float  BMP390_VertAcc;
 extern float  BMP390_VertSpd;
 extern float  BMP390_gForce;
 extern float  TotalMass;
+extern TIM_HandleTypeDef htim1;
 
 
 /**
@@ -442,6 +443,7 @@ typedef struct{
 
 	float alt0;
 	float alt1;
+	float holderAlt;
 
 	float acc0;
 	float acc1;
@@ -525,6 +527,7 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
+_Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390);
 
 
 float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);

@@ -51,29 +51,7 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 BMP390_Set_DefaultParams(BMP390);
 
-
-
-	 BMP390->PWR_CTRL = ((BMP390->Params.mode)<<4) |
-			 	 	 	((BMP390->Params.stat_meas_temp)<<1)|
-			 	 	 	((BMP390->Params.stat_meas_press)<<0);
-
-	 BMP390->CONFIG = ((BMP390->Params.filtercoef)<<1);
-
-	 BMP390->ODR 	= (BMP390->Params.odr);
-
-	 BMP390->OSR = ((BMP390->Params.press_osrs)<<0) |
-			 	   ((BMP390->Params.temp_osrs)<<3);
-
-	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_PWR_CTRL , 1, &BMP390->PWR_CTRL, 1, 1000);
-	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
-	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
-	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
-
-	 //İlk değerlerini sıfıra eşitleriz ki referans olsun bir sonraki gelecekler için
-	 BMP390->DeltaData.alt0 = 0.0;
-	 BMP390->DeltaData.spd0 = 0.0;
-	 BMP390->DeltaData.acc0 = 0.0;
-	 BMP390->DeltaData.cnt 	+= 1;
+	 BMP390_Upload_ConfigParams(BMP390);
 
 
 	 if(BMP390->Ref_Alt_Sel == 'm'){
@@ -88,11 +66,36 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 }
 
+	 return true;
+
+}
+
+_Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390){
+
+	 BMP390->PWR_CTRL = ((BMP390->Params.mode)<<4) |
+			 	 	 	((BMP390->Params.stat_meas_temp)<<1)|
+			 	 	 	((BMP390->Params.stat_meas_press)<<0);
+
+	 BMP390->CONFIG   = ((BMP390->Params.filtercoef)<<1);
+
+	 BMP390->ODR 	  = (BMP390->Params.odr);
+
+     BMP390->OSR 	  = ((BMP390->Params.press_osrs)<<0) |
+					    ((BMP390->Params.temp_osrs)<<3);
 
 
+	 BMP390->DeltaData.alt0 = 0.0;
+	 BMP390->DeltaData.spd0 = 0.0;
+	 BMP390->DeltaData.acc0 = 0.0;
+	 BMP390->DeltaData.cnt 	+= 1;
 
-return true;
 
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_PWR_CTRL , 1, &BMP390->PWR_CTRL, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
+	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
+
+	 return true;
 }
 
 _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390){
@@ -117,7 +120,7 @@ _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390){
 	BMP390->Raw_NVM.P10 = (int8_t)((BMP390_CalibCoeff[cnt])); 									 cnt+=1;
 	BMP390->Raw_NVM.P11 = (int8_t)((BMP390_CalibCoeff[cnt]));
 
-return true;
+	return true;
 
 }
 
@@ -138,7 +141,7 @@ _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390){
 	BMP390->Prcsd_NVM.P10 = (BMP390->Raw_NVM.P10 / pow(2,48));
 	BMP390->Prcsd_NVM.P11 = (BMP390->Raw_NVM.P11 / pow(2,65));
 
-return true;
+	return true;
 }
 
 _Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390){
@@ -151,7 +154,7 @@ _Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390){
 	BMP390->Params.filtercoef = BMP390_Filter_Coef_3;
 	BMP390->Params.odr = BMP390_ODR_50;
 
-return true;
+	return true;
 }
 
 
@@ -174,12 +177,17 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
+	*BMP390_VertSpd = BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt);
+	//Yeni değeri de atayalım işlemden sonra
+	BMP390->DeltaData.holderAlt = *BMP390_VertAlt; // şu an alt1 alt0 olmalı ve yine alt1-alt0 yapılmalı holder kullanrak
+	BMP390->DeltaData.cnt -= 1;
+
+
 	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
-	//*BMP390_VertSpd = BMP390_Calc_VertSpd();
 	//*BMP390_gForce	= BMP390_Calc_gForce();
 
 
-return true;
+	return true;
 }
 
 
@@ -246,7 +254,7 @@ float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_
 		 tempAltitude = (float)(tempAltitude + (float)((*BMP390_VertAlt) * (0.05)));
 
 	  }
-
+	 HAL_TIM_Base_Start_IT(&htim1);
 	 return tempAltitude;
 
 }
@@ -259,11 +267,12 @@ float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt){
 
 		BMP390->DeltaData.alt0 = (*BMP390_VertAlt);
 		BMP390->DeltaData.cnt += 1;
+
 	}
 	else if(BMP390->DeltaData.cnt == 1){
 
 		BMP390->DeltaData.alt1 = (*BMP390_VertAlt);
-		BMP390->DeltaData.cnt -= 1;//ÇALIŞIYORMUŞ
+
 		return ((BMP390->DeltaData.alt1) - (BMP390->DeltaData.alt0));
 
 	}

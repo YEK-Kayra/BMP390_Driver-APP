@@ -216,9 +216,9 @@ void TIM1_UP_IRQHandler(void)
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
 
 	BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
-		  		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
-		  						  &BMP390_VertAcc, &BMP390_VertSpd,
-		  						  &BMP390_gForce);
+		  		  	  	  	&BMP390_Temp, &BMP390_VertAlt,
+		  				    &BMP390_VertAcc, &BMP390_VertSpd,
+		  				    &BMP390_gForce);
 
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);

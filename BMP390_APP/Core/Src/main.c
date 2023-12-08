@@ -104,7 +104,7 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-   HAL_TIM_Base_Start_IT(&htim1);
+
 
 #ifdef BMP390_H_
 
@@ -129,12 +129,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
-	  		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
-	  						  &BMP390_VertAcc, &BMP390_VertSpd,
-	  						  &BMP390_gForce);
-
 
   }
   /* USER CODE END 3 */
