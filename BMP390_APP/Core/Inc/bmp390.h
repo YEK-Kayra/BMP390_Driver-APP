@@ -31,6 +31,7 @@ extern float  BMP390_VertAlt;
 extern float  BMP390_VertAcc;
 extern float  BMP390_VertSpd;
 extern float  BMP390_gForce;
+extern float  TotalMass;
 
 
 /**
@@ -383,7 +384,6 @@ typedef struct{
 
 }BMP390_RawCalibData_TypeDef;
 
-//int_ctrl için
 
 typedef struct {
 
@@ -438,7 +438,20 @@ typedef struct {
 
 }BMP390_Params_t;
 
+typedef struct{
 
+	float alt0;
+	float alt1;
+
+	float acc0;
+	float acc1;
+
+	float spd0;
+	float spd1;
+
+	uint8_t cnt;
+
+}BMP390_DeltaData;
 typedef struct{
 
 	BMP390_Params_t Params;
@@ -450,6 +463,8 @@ typedef struct{
 	BMP390_RawCalibData_TypeDef Raw_NVM;
 
 	BMP390_PrcsdCalibData_TypeDef Prcsd_NVM;
+
+	BMP390_DeltaData DeltaData;
 
 	uint8_t CONFIG; 				/*! bits: iir_filter[3:1] */
 	uint8_t ODR;					/*! bits: odr_sel[4:0] */
@@ -518,9 +533,9 @@ float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press);
 float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);
 
 
-float BMP390_Calc_VertAcc(float *BMP390_VertAlt);
-float BMP390_Calc_VertSpd();
-float BMP390_Calc_gForce();
+float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd);//Hız değişimi ile ivme hesabı, a = (V1 - V0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);//Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass); //İvme / 9.81 e bölünmesi ve kütle ile çarpılarak 1g den ivme hesabı
 
 
 

@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "bmp390.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,6 +43,15 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
+extern BMP390_HandleTypeDef BMP390;
+extern float  BMP390_Press;
+extern float  BMP390_Temp;
+extern float  BMP390_VertAlt;
+extern float  BMP390_VertAcc;
+extern float  BMP390_VertSpd;
+extern float  BMP390_gForce;
+extern float  TotalMass;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,7 +65,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern TIM_HandleTypeDef htim1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -197,6 +207,25 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles TIM1 update interrupt.
+  */
+void TIM1_UP_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_IRQn 0 */
+
+	BMP390_Get_SensorValues(&BMP390, &BMP390_Press,
+		  		  	  	  	  	  &BMP390_Temp, &BMP390_VertAlt,
+		  						  &BMP390_VertAcc, &BMP390_VertSpd,
+		  						  &BMP390_gForce);
+
+  /* USER CODE END TIM1_UP_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_UP_IRQn 1 */
+
+  /* USER CODE END TIM1_UP_IRQn 1 */
+}
 
 /* USER CODE BEGIN 1 */
 

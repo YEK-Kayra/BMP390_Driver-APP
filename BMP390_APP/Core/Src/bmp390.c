@@ -69,6 +69,12 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
 
+	 //İlk değerlerini sıfıra eşitleriz ki referans olsun bir sonraki gelecekler için
+	 BMP390->DeltaData.alt0 = 0.0;
+	 BMP390->DeltaData.spd0 = 0.0;
+	 BMP390->DeltaData.acc0 = 0.0;
+	 BMP390->DeltaData.cnt 	+= 1;
+
 
 	 if(BMP390->Ref_Alt_Sel == 'm'){
 
@@ -81,6 +87,9 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 		 BMP390->FixedAltitude = 0.0;
 
 	 }
+
+
+
 
 return true;
 
@@ -165,7 +174,7 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
-	*BMP390_VertAcc = BMP390_Calc_VertAcc();
+	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
 	//*BMP390_VertSpd = BMP390_Calc_VertSpd();
 	//*BMP390_gForce	= BMP390_Calc_gForce();
 
@@ -243,22 +252,29 @@ float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_
 }
 
 
-//****************Genel Algoritma defterde yazıldığı gibi olacak kesmeler kullanılacak******************/
-//Genel 1 saniyelik kesme oluşturma fonksiyonu ayarlanmalı kullanıcıyı uğraştırmadan
-// V = (X1 - X0)/gerçek 1 saniye hızı verecek
-float BMP390_Calc_VertSpd(){
+//Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt){
+
+	if(BMP390->DeltaData.cnt == 0){
+
+		BMP390->DeltaData.alt0 = (*BMP390_VertAlt);
+		BMP390->DeltaData.cnt += 1;
+	}
+	else if(BMP390->DeltaData.cnt == 1){
+
+		BMP390->DeltaData.alt1 = (*BMP390_VertAlt);
+		BMP390->DeltaData.cnt -= 1;//ÇALIŞIYORMUŞ
+		return ((BMP390->DeltaData.alt1) - (BMP390->DeltaData.alt0));
+
+	}
 
 }
 
-// a = (V1 - V0)/gerçek 1 saniye hızı verecek
-//
-float BMP390_Calc_VertAcc(){
+float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd){
 
 }
 
-//Aldığın ivme değerlerini /g ye bölerek üstüne bir de nesne ağırlığı ile çarparak nesnenin yenidiği g kuvvetini hesap edecek
-//Bu fonksiyonda saniyede 1 kez çalışacak.
-float BMP390_Calc_gForce(){
+float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass){
 
 }
 

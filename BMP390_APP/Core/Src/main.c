@@ -55,6 +55,7 @@ float  BMP390_VertAlt;
 float  BMP390_VertAcc;
 float  BMP390_VertSpd;
 float  BMP390_gForce;
+float  TotalMass;
 
 /* USER CODE END PV */
 
@@ -103,6 +104,7 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+   HAL_TIM_Base_Start_IT(&htim1);
 
 #ifdef BMP390_H_
 
