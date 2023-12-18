@@ -49,13 +49,13 @@ TIM_HandleTypeDef htim1;
 
 BMP390_HandleTypeDef BMP390;
 
-float  BMP390_Press;
-float  BMP390_Temp;
-float  BMP390_VertAlt;
-float  BMP390_VertAcc;
-float  BMP390_VertSpd;
-float  BMP390_gForce;
-float  TotalMass;
+float  BMP390_Press 	= 0.0;
+float  BMP390_Temp 		= 0.0;
+float  BMP390_VertAlt	= 0.0;
+float  BMP390_VertAcc 	= 0.0;
+float  BMP390_VertSpd 	= 0.0;
+float  BMP390_gForce 	= 0.0;
+float  TotalMass 		= 0.75; /*! Unit is Kilogram/
 
 /* USER CODE END PV */
 

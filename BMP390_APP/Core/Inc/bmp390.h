@@ -443,15 +443,15 @@ typedef struct{
 
 	float alt0;
 	float alt1;
-	float holderAlt;
+	float holdAlt;
 
 	float acc0;
 	float acc1;
+	float holdAcc;
 
 	float spd0;
 	float spd1;
-
-	uint8_t cnt;
+	float holdSpd;
 
 }BMP390_DeltaData;
 typedef struct{
@@ -500,7 +500,7 @@ typedef struct{
 	   	   	   	   	   	   	   	   	  * 							 For 'M' : it sets the reference altitude to sea level
 	   	   	   	   	   	   	   	   	  */
 
-	float FixedAltitude;
+	float FixedAltitude;			/*!It gets otomaticly zero or calculated sea level pressure after selecting Ref_Alt_Sel*/
 
 
 
@@ -514,32 +514,41 @@ typedef struct{
 /*!@name          	BMP390 Function Prototypes            			  		  */
 /******************************************************************************/
 
+//BMP390 sensörünü başlatır
 _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390);
-
+//ınit içinde olup raw sabitleri çipten çeker
 _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390);
-
+//Gelen raw çip verileri belirli sayılara bölünerek işlenmiş sabitler olarak kaydedilir
 _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390);
-
+//kullanıcının isterleri üzerine konfigüre edilebilen parametreleri ayarlar
 _Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390);
-
+//Ayarlanan parametreleri registerlara kaydeder ve a0,v0,h0 değerlerini sıfırlar
+_Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390);
+//Kendi içindeki fonksiyonları kullanarak bütün verileri tek bir fonksiyon çıktısı olarak verir
 _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_Temp,float *BMP390_VertAlt,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
-_Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390);
 
 
+//Gelen raw basıncı sıcaklığı da kullanarak işlenmiş basınca çevirir
 float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);
+//Gelen raw sıcaklığı işlenmiş sıcaklığa çevirir
 float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp);
+//Basınç verisini kullanarak yerden irtafa olarak yüksekliğin ölçüsünü  verir
 float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press);
+//Init fonksiyonun içerisinde kullanılacak fonksiyon olup ortalama o andaki deniz seviyesi yüksekliğini alır(konumun 0 kabul edilmesi gerektiği an çalışır
 float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);
 
 
-float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd);//Hız değişimi ile ivme hesabı, a = (V1 - V0)/gerçek 1 saniye hızı verecek
-float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);//Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
-float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass); //İvme / 9.81 e bölünmesi ve kütle ile çarpılarak 1g den ivme hesabı
+//Hız değişimi ile ivme hesabı, a = (V1 - V0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, float *BMP390_VertAcc);
 
+//Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
+float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt, float  *BMP390_VertSpd);
 
+//İvme / 9.81 e bölünmesi ve kütle ile çarpılarak 1g den ivme hesabı
+float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass, float *BMP390_VertAcc);
 
 #endif /* INC_BMP390_H_ */

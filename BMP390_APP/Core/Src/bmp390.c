@@ -66,6 +66,8 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 }
 
+
+
 	 return true;
 
 }
@@ -83,17 +85,17 @@ _Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390){
      BMP390->OSR 	  = ((BMP390->Params.press_osrs)<<0) |
 					    ((BMP390->Params.temp_osrs)<<3);
 
-
-	 BMP390->DeltaData.alt0 = 0.0;
-	 BMP390->DeltaData.spd0 = 0.0;
-	 BMP390->DeltaData.acc0 = 0.0;
-	 BMP390->DeltaData.cnt 	+= 1;
-
-
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_PWR_CTRL , 1, &BMP390->PWR_CTRL, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
+
+
+	 //değişimleri sıfırlara eşitleyelim
+	 BMP390->DeltaData.alt0 = 0.0;
+	 BMP390->DeltaData.alt1 = 0.0;
+	 BMP390->DeltaData.holdAlt = 0.0;
+
 
 	 return true;
 }
@@ -177,12 +179,8 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
-	*BMP390_VertSpd = BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt);
-	//Yeni değeri de atayalım işlemden sonra
-	BMP390->DeltaData.holderAlt = *BMP390_VertAlt; // şu an alt1 alt0 olmalı ve yine alt1-alt0 yapılmalı holder kullanrak
-	BMP390->DeltaData.cnt -= 1;
-
-
+	//Zaten her 1hz ile buraya girecek
+	*BMP390_VertSpd = BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt,BMP390_VertSpd);
 	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
 	//*BMP390_gForce	= BMP390_Calc_gForce();
 
@@ -254,36 +252,34 @@ float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_
 		 tempAltitude = (float)(tempAltitude + (float)((*BMP390_VertAlt) * (0.05)));
 
 	  }
-	 HAL_TIM_Base_Start_IT(&htim1);
+
 	 return tempAltitude;
 
 }
 
 
 //Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
-float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt){
+float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt, float *BMP390_VertSpd){
 
-	if(BMP390->DeltaData.cnt == 0){
-
-		BMP390->DeltaData.alt0 = (*BMP390_VertAlt);
-		BMP390->DeltaData.cnt += 1;
-
-	}
-	else if(BMP390->DeltaData.cnt == 1){
-
-		BMP390->DeltaData.alt1 = (*BMP390_VertAlt);
-
-		return ((BMP390->DeltaData.alt1) - (BMP390->DeltaData.alt0));
-
-	}
+	BMP390->DeltaData.alt1 = (*BMP390_VertAlt);//gelen irtifa  verisini x1 e at
+	(*BMP390_VertSpd) 	   = (BMP390->DeltaData.alt1 - BMP390->DeltaData.alt0); // Verilerin farkını al ve hız değeri elde et
+	BMP390->DeltaData.alt0 = BMP390->DeltaData.alt1; // artık yeni konum x0 x1'İn değerini alarak bir basamak daha çıktı
 
 }
 
-float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd){
+
+float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, float *BMP390_VertAcc){
+
+	BMP390->DeltaData.spd1 = (*BMP390_VertSpd);
+	*BMP390_VertAcc		   = (BMP390->DeltaData.spd1 - BMP390->DeltaData.spd0);
+	BMP390->DeltaData.spd0 = BMP390->DeltaData.spd1;
 
 }
 
-float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass){
+
+float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass, float *BMP390_VertAcc){
+
+	(*BMP390_gForce ) = ((*BMP390_VertAcc)/GravityAccel);
 
 }
 
