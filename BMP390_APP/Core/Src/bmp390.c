@@ -66,10 +66,33 @@ _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390){
 
 	 }
 
+	 BMP390_ResetRef_DeltaVal(BMP390);
+
+	 HAL_TIM_Base_Start_IT(&htim1);
 
 
 	 return true;
 
+}
+
+_Bool BMP390_ResetRef_DeltaVal(BMP390_HandleTypeDef *BMP390){
+
+	//At the beginning, reset the altitude values for the first and second conditions.
+	BMP390->DeltaData.alt0 = 0.0;
+	BMP390->DeltaData.alt1 = 0.0;
+	BMP390->DeltaData.holdAlt = 0.0;
+
+	//At the beginning, reset the speed values for the first and second conditions.
+	BMP390->DeltaData.spd0 = 0.0;
+	BMP390->DeltaData.spd1 = 0.0;
+	BMP390->DeltaData.holdSpd = 0.0;
+
+	//At the beginning, reset the acceleration values for the first and second conditions.
+	BMP390->DeltaData.acc0 = 0.0;
+	BMP390->DeltaData.acc1 = 0.0;
+	BMP390->DeltaData.holdAcc = 0.0;
+
+	return true;
 }
 
 _Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390){
@@ -89,13 +112,6 @@ _Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390){
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_CONFIG , 1, &BMP390->CONFIG, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_ODR , 1, &BMP390->ODR, 1, 1000);
 	 HAL_I2C_Mem_Write(BMP390->i2c, BMP390->BMP390_I2C_ADDRESS, BMP390_REG_OSR , 1, &BMP390->OSR, 1, 1000);
-
-
-	 //değişimleri sıfırlara eşitleyelim
-	 BMP390->DeltaData.alt0 = 0.0;
-	 BMP390->DeltaData.alt1 = 0.0;
-	 BMP390->DeltaData.holdAlt = 0.0;
-
 
 	 return true;
 }
@@ -179,10 +195,9 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
-	//Zaten her 1hz ile buraya girecek
 	*BMP390_VertSpd = BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt,BMP390_VertSpd);
-	//*BMP390_VertAcc = BMP390_Calc_VertAcc();
-	//*BMP390_gForce	= BMP390_Calc_gForce();
+	*BMP390_VertAcc = BMP390_Calc_VertAcc(BMP390, BMP390_VertSpd, BMP390_VertAcc);
+	*BMP390_gForce	= BMP390_Calc_gForce(BMP390, BMP390_gForce, &TotalMass, BMP390_VertAcc);
 
 
 	return true;
@@ -279,7 +294,7 @@ float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, f
 
 float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass, float *BMP390_VertAcc){
 
-	(*BMP390_gForce ) = ((*BMP390_VertAcc)/GravityAccel);
+	(*BMP390_gForce ) = (((*BMP390_VertAcc)/GravityAccel)*(*TotalMass));
 
 }
 

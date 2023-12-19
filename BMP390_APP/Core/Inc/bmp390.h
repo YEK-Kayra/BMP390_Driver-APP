@@ -21,32 +21,34 @@
 #include "stdint.h"
 #include "math.h"
 
+
+
 /******************************************************************************/
 /*!@name          BMP390 External Variable	     	                          */
 /******************************************************************************/
 
+extern TIM_HandleTypeDef htim1;
 extern float  BMP390_Press;
 extern float  BMP390_Temp;
 extern float  BMP390_VertAlt;
 extern float  BMP390_VertAcc;
 extern float  BMP390_VertSpd;
-extern float  BMP390_gForce;
 extern float  TotalMass;
-extern TIM_HandleTypeDef htim1;
+extern float  BMP390_gForce;/**
+ 	 	 	 	 	 	 	 * G force = It's a thing that creates the feeling of heaviness
+							 * GForce  = m * a
+							 * gForce  = It's mechanical force that unit mass of an object is exposed to
+							 * a 	   = It's acceleration that is done by the world to an object
+							 * m       = It's the total mass of an object
+							 **/
 
 
-/**
- * G force = It's a thing that creates the feeling of heaviness
- * GForce  = m * a
- * gForce  = It's mechanical force that unit mass of an object is exposed to
- * a 	   = It's acceleration that is done by the world to an object
- * m       = It's the total mass of an object
- **/
 
 /******************************************************************************/
 /*!@name              BMP390 DEFINITION         			    		      */
 /******************************************************************************/
-/*******************SENSOR REGISTER DEFINITION **********************/
+
+/************************SENSOR REGISTER DEFINITIONS***************************/
 
 #define BMP390_REG_CONFIG		 	0x1F  /*Controls the IIR filter coefficients.
  	 	 	 	 	 	 	 	 	 	    bits :  iir_filter[3:1] */
@@ -105,34 +107,40 @@ extern TIM_HandleTypeDef htim1;
 
 #define BMP390_REG_ERR		 		0x02  /*Sensor Error conditions, bits: conf_err[2:2], cmd_err[1:1], fatal_err[0:0] */
 
-/*******************GENERAL DEFINITION **********************/
+/***************************GENERAL DEFINITIONS*******************************/
 
 /**!These macros define the address that is used at i2c communication*/
 #define BMP390_StartAdd_CalibCoeff 			    0x31
 #define BMP390_StartAdd_MSB_LSB_XLSB_PT  		0x04
 
 /**!These macros provide to calculate the altitude of BMP390 */
-// The Formula : h = (T0 / L) * (1 - (P0 / P) * (g / (R * L)))
+// The Formula : H = (T0 / L) * (1 - (P0 / P) * (g / (R * L)))
 #define SeaLevelPress  101325 // (P0)Unit : Pascal
 #define SeaLevelTemp   288.15 // (TO)Unit : Kelvin
 #define GradientTemp   0.0065 // (L) Unit : Kelvin/Meter
 #define GravityAccel   9.80665// (g) Unit : Meter/second^2
 #define GasCoefficient 287.05 // (R) Unit : Joule/Kelvin*Kilogram
 							  // (P) is current pressure(Unit : Pascal), (h) is current altitude(Unit : Meter)
+							  // (H) is the current altitude of the sensor or device
+
 
 
 /******************************************************************************/
 /*!@name         		    BMP390 ENUM                                       */
 /******************************************************************************/
 
-/*******************GENERAL SENSOR FEATURES ENUMS**********************/
+/***********************GENERAL SENSOR FEATURES ENUMS**************************/
 
+/**
+ * @brief For the enable and disable bits of the register features
+ */
 typedef enum{
 
 	Disable = 0,
 	Enable  = 1
 
 }BMP390_REG_Stat_bits_TypeDef;
+
 
 /**
  * @brief Work modes
@@ -145,7 +153,9 @@ typedef enum{
 
 }BMP390_Mode_TypeDef;
 
-
+/**
+ * @brief
+ */
 typedef enum{
 
 	BMP390_SPI4W_Mode = 0,
@@ -153,13 +163,17 @@ typedef enum{
 
 }BMP390_SPI_X_TypeDef;
 
-
+/**
+ * @brief
+ */
 typedef enum{
 
 	BMP390_I2C_Selt_Short = 0,
 	BMP390_I2C_Sel_Long  = 1
 
 }BMP390_I2C_Wdt_Sel_TypeDef;
+
+
 /**
  * @brief CMD register will operate softreset and flushing FIFO
  */
@@ -228,7 +242,6 @@ typedef enum{
 	BMP390_ODR_0p0015 = 17, /*Sampling period = 655.36s*/
 
 }BMP390_ODR_TypeDef;
-
 
 
 /***********************FIFO FEATURES ENUMS**************************/
@@ -341,11 +354,12 @@ typedef enum{
 /*!@name         	BMP390 Structures                                         */
 /******************************************************************************/
 
+/**
+ * @brief  PAR_Tx or PAR_Px Parameters are processed data.
+ * 		   We utilize them during the calculation of pressure and temperature compensation
+ */
 typedef struct{
 
-	/**
-	 * PAR_T/P parameters are processed data. We use them when calculating Pressure, Temperature compensation
-	 */
 	float T1;
 	float T2;
 	float T3;
@@ -363,11 +377,14 @@ typedef struct{
 
 }BMP390_PrcsdCalibData_TypeDef;
 
+
+/**
+ * @brief  NVM_PAR_Tx and NVM_PAR_Px parameters are raw data.
+ * 		   We need to convert them to PAR_T/P parameters using the datasheet
+ *
+ */
 typedef struct{
 
-	/**
-	 * NVM_PAR_T/P parameters are raw datas. We have to convert them to PAR_T/P params by using datasheet
-	 */
 	uint16_t T1;
 	uint16_t T2;
 	int8_t T3;
@@ -386,11 +403,17 @@ typedef struct{
 }BMP390_RawCalibData_TypeDef;
 
 
+/**
+ * @brief  The BMP390 registers hold the structure
+ * 		   where all register features capable of receiving values are stored
+ *
+ */
 typedef struct {
 
-	BMP390_Mode_TypeDef mode;
-	BMP390_ODR_TypeDef	odr;
-	BMP390_FilterCoef_TypeDef filtercoef;
+
+	BMP390_Mode_TypeDef mode;				/*! Select the sleep mode, forced mode, normal mode*/
+	BMP390_ODR_TypeDef	odr;				/*! Select the output data rate. In other words, the sampling period*/
+	BMP390_FilterCoef_TypeDef filtercoef;   /*! Select the IIR filter coefficients */
 
 	/**
 	 * These two of them are about oversampling settings register (OSR), Variables of PWR_CTRL variable
@@ -439,6 +462,11 @@ typedef struct {
 
 }BMP390_Params_t;
 
+
+/**
+ * @brief  Calculate the speed, acceleration and gForce by using these variables
+ *
+ */
 typedef struct{
 
 	float alt0;
@@ -454,6 +482,13 @@ typedef struct{
 	float holdSpd;
 
 }BMP390_DeltaData;
+
+
+/**
+ * @brief   This is the general structure of the BMP390 sensor,
+ * 			which contains all the variables and their respective values
+ *
+ */
 typedef struct{
 
 	BMP390_Params_t Params;
@@ -487,13 +522,10 @@ typedef struct{
 									 * 		fifo_mode[0:0]
 									 */
 
-
 	uint8_t FIFO_CONFIG_2;			/*! bits: data_select[4:3], fifo_subsampling[2:0] */
 
 	uint8_t FIFO_WTM_0;				/*! bits: fifo_water_mark_0_7[7:0] */
 	uint8_t FIFO_WTM_1;				/*! bits: fifo_water_mark_8[0:0] */
-
-
 
 	char Ref_Alt_Sel;				/**
 	   	   	   	   	   	   	   	   	  * Ref_Alt_Sel is a selection;  For 'm' : it sets the reference altitude to the current location (0 meters)
@@ -501,11 +533,6 @@ typedef struct{
 	   	   	   	   	   	   	   	   	  */
 
 	float FixedAltitude;			/*!It gets otomaticly zero or calculated sea level pressure after selecting Ref_Alt_Sel*/
-
-
-
-
-
 
 }BMP390_HandleTypeDef;
 
@@ -530,7 +557,7 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
-
+_Bool BMP390_ResetRef_DeltaVal(BMP390_HandleTypeDef *BMP390);
 
 //Gelen raw basıncı sıcaklığı da kullanarak işlenmiş basınca çevirir
 float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);
