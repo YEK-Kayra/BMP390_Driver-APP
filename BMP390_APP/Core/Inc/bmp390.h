@@ -13,9 +13,9 @@
 #define BMP390_H_
 
 
-/******************************************************************************/
-/*!@name         Header includes            				    			  */
-/******************************************************************************/
+/******************************************************************************
+         			#### BMP390 INCLUDES ####
+******************************************************************************/
 #include "main.h"
 #include "stdbool.h"
 #include "stdint.h"
@@ -23,9 +23,9 @@
 
 
 
-/******************************************************************************/
-/*!@name          BMP390 External Variable	     	                          */
-/******************************************************************************/
+/******************************************************************************
+         			#### BMP390 EXTERNAL VARIABLES ####
+******************************************************************************/
 
 extern TIM_HandleTypeDef htim1;
 extern float  BMP390_Press;
@@ -44,9 +44,9 @@ extern float  BMP390_gForce;/**
 
 
 
-/******************************************************************************/
-/*!@name              BMP390 DEFINITION         			    		      */
-/******************************************************************************/
+/******************************************************************************
+         					#### BMP390 DEFINITIONS ####
+******************************************************************************/
 
 /************************SENSOR REGISTER DEFINITIONS***************************/
 
@@ -125,9 +125,9 @@ extern float  BMP390_gForce;/**
 
 
 
-/******************************************************************************/
-/*!@name         		    BMP390 ENUM                                       */
-/******************************************************************************/
+/******************************************************************************
+         					#### BMP390 ENUMS ####
+******************************************************************************/
 
 /***********************GENERAL SENSOR FEATURES ENUMS**************************/
 
@@ -350,9 +350,9 @@ typedef enum{
 }BMP390_Error_TypeDef;
 
 
-/******************************************************************************/
-/*!@name         	BMP390 Structures                                         */
-/******************************************************************************/
+/******************************************************************************
+         				#### BMP390 STRUCTURES ####
+******************************************************************************/
 
 /**
  * @brief  PAR_Tx or PAR_Px Parameters are processed data.
@@ -537,45 +537,150 @@ typedef struct{
 }BMP390_HandleTypeDef;
 
 
-/******************************************************************************/
-/*!@name          	BMP390 Function Prototypes            			  		  */
-/******************************************************************************/
+/******************************************************************************
+         			#### BMP390 PROTOTYPES OF FUNCTIONS ####
+******************************************************************************/
 
-//BMP390 sensörünü başlatır
+/**
+  * @brief  BMP390 sensor initialization.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_Init(BMP390_HandleTypeDef *BMP390);
-//ınit içinde olup raw sabitleri çipten çeker
+
+
+/**
+  * @brief  Retrieves raw calibration coefficient data from the BMP390 chip and stores them in Raw_NVM.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_Get_RawCalibCoeff(BMP390_HandleTypeDef *BMP390);
-//Gelen raw çip verileri belirli sayılara bölünerek işlenmiş sabitler olarak kaydedilir
+
+
+/**
+  * @brief  Processes the incoming raw chip data through mathematical operations with specific numbers,
+  * 		converting them into processed data and stores them in Prcsd_NVM.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_Calc_PrcsdCalibrationCoeff(BMP390_HandleTypeDef *BMP390);
-//kullanıcının isterleri üzerine konfigüre edilebilen parametreleri ayarlar
+
+
+/**
+  * @brief  At any time, the user can modify values to be written to sensor registers within this function,
+  * 		enabling the sensor to operate with customized parameters.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_Set_DefaultParams(BMP390_HandleTypeDef *BMP390);
-//Ayarlanan parametreleri registerlara kaydeder ve a0,v0,h0 değerlerini sıfırlar
+
+
+/**
+  * @brief  Specified parameter values are written into the sensor.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_Upload_ConfigParams(BMP390_HandleTypeDef *BMP390);
-//Kendi içindeki fonksiyonları kullanarak bütün verileri tek bir fonksiyon çıktısı olarak verir
+
+
+/**
+  * @brief  A single function can calculate pressure, temperature, altitude, vertical speed,
+  * 		vertical acceleration, and g-force values.
+  * @param  BMP390 general handle
+  * @param  BMP390_Press (kPa)
+  * @param  BMP390_Temp (°C)
+  * @param	BMP390_VertAlt (m)
+  * @param	BMP390_VertAcc (m/s²)
+  * @param	BMP390_VertSpd (m/s)
+  * @param	BMP390_gForce  (kg*g)
+  * @retval booleans.
+  */
 _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 							 float *BMP390_Temp,float *BMP390_VertAlt,
 							 float *BMP390_VertAcc, float *BMP390_VertSpd,
 							 float *BMP390_gForce);
 
+/**
+  * @brief  Resets initial, final, and differential values to zero for vertical speed,
+  * 		vertical acceleration, and g-force calculations.
+  * @param  BMP390 general handle.
+  * @retval booleans.
+  */
 _Bool BMP390_ResetRef_DeltaVal(BMP390_HandleTypeDef *BMP390);
 
-//Gelen raw basıncı sıcaklığı da kullanarak işlenmiş basınca çevirir
+
+/**
+  * @brief  Calculates processed pressure using the incoming raw pressure value.
+  * @param  BMP390 general handle.
+  * @param 	rawPress value is used to calculate Processed Pressure
+  * @param  BMP390_Temp is support value to calculete processed pressure
+  * @retval Processed Pressure.
+  */
 float BMP390_Calc_PrcsdPress(BMP390_HandleTypeDef *BMP390, uint32_t rawPress, float *BMP390_Temp);
-//Gelen raw sıcaklığı işlenmiş sıcaklığa çevirir
+
+
+/**
+  * @brief  Calculates processed temperature using the incoming raw temperature values.
+  * @param  BMP390 general handle.
+  * @param 	rawPress value is used to calculate Processed Pressure
+  * @retval Processed Temperature.
+  */
 float BMP390_Calc_PrcsdTemp(BMP390_HandleTypeDef *BMP390, uint32_t rawTemp);
-//Basınç verisini kullanarak yerden irtafa olarak yüksekliğin ölçüsünü  verir
+
+
+/**
+  * @brief  Calculates the altitude above selecting level by taking the processed pressure data.
+  * @param  BMP390 general handle.
+  * @param 	BMP390_Press value is Processed Pressure
+  * @retval Vertical Altitude.
+  */
 float BMP390_Calc_VertAlt(BMP390_HandleTypeDef *BMP390, float *BMP390_Press);
-//Init fonksiyonun içerisinde kullanılacak fonksiyon olup ortalama o andaki deniz seviyesi yüksekliğini alır(konumun 0 kabul edilmesi gerektiği an çalışır
+
+
+/**
+  * @brief  Calculates the avarage altitude above selecting level by taking the processed pressure data.
+  * 		@detail : 	Ref_Alt_Sel is a selection;  For 'm' : it sets the reference altitude to the current location (0 meters)
+  * 				 								 For 'M' : it sets the reference altitude to sea level
+  *
+  * @param  BMP390 general handle.
+  * @param 	BMP390_VertAlt value is the sea level altitude
+  * @retval Temporary Altitude.
+  */
 float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt);
 
 
-//Hız değişimi ile ivme hesabı, a = (V1 - V0)/gerçek 1 saniye hızı verecek
+/**
+  * @brief  Calculates the vertical acceleration by determining the change in vertical speed
+  * 		(final speed - initial speed) within a unit of time (1 second)
+  *
+  * @param  BMP390 general handle.
+  * @param  BMP390_VertSpd is the vertical speed value
+  * @param 	BMP390_VertAcc value is the vertical accelaration
+  */
+
+
 float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, float *BMP390_VertAcc);
 
-//Yükseklik değişimi ile hız hesabı,// V = (X1 - X0)/gerçek 1 saniye hızı verecek
+/**
+  * @brief  Calculates the gained speed in the vertical axis by determining the change in
+  * 		position (final position - initial position) within a unit of time (1 second).
+  *
+  * @param  BMP390 general handle.
+  * @param 	BMP390_VertAlt value is the sea level altitude
+  * @retval Temporary Altitude.
+  */
 float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt, float  *BMP390_VertSpd);
 
-//İvme / 9.81 e bölünmesi ve kütle ile çarpılarak 1g den ivme hesabı
+/**
+  * @brief  Calculates the gravitational force experienced by multiplying the change in vertical acceleration
+  * 		(final acceleration - initial acceleration) within a unit of time (1 second) by the mass of the object,
+  * 		yielding the force of gravity (g-force) exerted
+  *
+  * @param  BMP390 general handle.
+  * @param 	BMP390_gForce is the force that is applied to the object
+  * @param  TotalMass
+  * @param 	BMP390_VertAcc is vertical altitude
+  */
 float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass, float *BMP390_VertAcc);
 
 #endif /* INC_BMP390_H_ */
