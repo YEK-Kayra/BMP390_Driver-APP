@@ -195,9 +195,9 @@ _Bool BMP390_Get_SensorValues(BMP390_HandleTypeDef *BMP390, float *BMP390_Press,
 	*BMP390_Press 	= BMP390_Calc_PrcsdPress(BMP390,rawPress,BMP390_Temp);
 	*BMP390_VertAlt = BMP390_Calc_VertAlt(BMP390, BMP390_Press);
 
-	*BMP390_VertSpd = BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt,BMP390_VertSpd);
-	*BMP390_VertAcc = BMP390_Calc_VertAcc(BMP390, BMP390_VertSpd, BMP390_VertAcc);
-	*BMP390_gForce	= BMP390_Calc_gForce(BMP390, BMP390_gForce, &TotalMass, BMP390_VertAcc);
+	BMP390_Calc_VertSpd(BMP390, BMP390_VertAlt,BMP390_VertSpd);
+	BMP390_Calc_VertAcc(BMP390, BMP390_VertSpd, BMP390_VertAcc);
+	BMP390_Calc_gForce(BMP390, BMP390_gForce, &TotalMass, BMP390_VertAcc);
 
 
 	return true;
