@@ -1,0 +1,14 @@
+../Core/Src/bmp390.c:40:7:BMP390_Init	4
+../Core/Src/bmp390.c:78:7:BMP390_ResetRef_DeltaVal	1
+../Core/Src/bmp390.c:98:7:BMP390_Upload_ConfigParams	1
+../Core/Src/bmp390.c:119:7:BMP390_Get_RawCalibCoeff	1
+../Core/Src/bmp390.c:145:7:BMP390_Calc_PrcsdCalibrationCoeff	1
+../Core/Src/bmp390.c:165:7:BMP390_Set_DefaultParams	1
+../Core/Src/bmp390.c:179:7:BMP390_Get_SensorValues	1
+../Core/Src/bmp390.c:207:7:BMP390_Calc_PrcsdTemp	1
+../Core/Src/bmp390.c:220:7:BMP390_Calc_PrcsdPress	1
+../Core/Src/bmp390.c:248:7:BMP390_Calc_VertAlt	1
+../Core/Src/bmp390.c:257:7:BMP390_Calc_TemporaryAltitude	2
+../Core/Src/bmp390.c:277:7:BMP390_Calc_VertSpd	1
+../Core/Src/bmp390.c:286:7:BMP390_Calc_VertAcc	1
+../Core/Src/bmp390.c:295:7:BMP390_Calc_gForce	1

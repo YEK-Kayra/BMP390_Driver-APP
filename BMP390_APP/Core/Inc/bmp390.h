@@ -657,30 +657,9 @@ float BMP390_Calc_TemporaryAltitude(BMP390_HandleTypeDef *BMP390, float *BMP390_
   * @param  BMP390_VertSpd is the vertical speed value
   * @param 	BMP390_VertAcc value is the vertical accelaration
   */
-
-
-float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, float *BMP390_VertAcc);
-
-/**
-  * @brief  Calculates the gained speed in the vertical axis by determining the change in
-  * 		position (final position - initial position) within a unit of time (1 second).
-  *
-  * @param  BMP390 general handle.
-  * @param 	BMP390_VertAlt value is the sea level altitude
-  * @retval Temporary Altitude.
-  */
-float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt, float  *BMP390_VertSpd);
-
-/**
-  * @brief  Calculates the gravitational force experienced by multiplying the change in vertical acceleration
-  * 		(final acceleration - initial acceleration) within a unit of time (1 second) by the mass of the object,
-  * 		yielding the force of gravity (g-force) exerted
-  *
-  * @param  BMP390 general handle.
-  * @param 	BMP390_gForce is the force that is applied to the object
-  * @param  TotalMass
-  * @param 	BMP390_VertAcc is vertical altitude
-  */
 float BMP390_Calc_gForce(BMP390_HandleTypeDef *BMP390,  float *BMP390_gForce, float *TotalMass, float *BMP390_VertAcc);
+float BMP390_Calc_VertAcc(BMP390_HandleTypeDef *BMP390, float *BMP390_VertSpd, float *BMP390_VertAcc);
+float BMP390_Calc_VertSpd(BMP390_HandleTypeDef *BMP390, float *BMP390_VertAlt, float *BMP390_VertSpd);
+
 
 #endif /* INC_BMP390_H_ */
